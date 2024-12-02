@@ -1,0 +1,324 @@
+{
+	"name": "capmotions",
+	"displayName": "capmotions",
+	"description": "Vim-like motions when CapsLock is active",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.93.0"
+	},
+	"categories": ["Other"],
+	"activationEvents": ["onStartupFinished"],
+	"main": "./out/extension.js",
+	"contributes": {
+		"keybindings": [
+			{
+				"key": "enter",
+				"command": "capmotions.enter",
+				"when": "editorTextFocus && capmotions.mode !== 'insert'"
+			},
+			{
+				"key": "backspace",
+				"command": "capmotions.backspace",
+				"when": "editorTextFocus && capmotions.mode !== 'insert'"
+			},
+			{
+				"key": "escape",
+				"command": "capmotions.setNormalMode",
+				"when": "capmotions.mode === 'visual' && capmotions.capture === false"
+			},
+			{
+				"key": "escape",
+				"command": "capmotions.clearCapture",
+				"when": "capmotions.capture === true"
+			}
+		],
+		"commands": [
+			{
+				"command": "capmotions.syncCapsLockStatus",
+				"title": "CapMotions: Update CapsLock status"
+			},
+			{
+				"command": "capmotions.setInsertMode",
+				"title": "CapMotions: Set mode to INSERT"
+			},
+			{
+				"command": "capmotions.setNormalMode",
+				"title": "CapMotions: Set mode to NORMAL"
+			},
+			{
+				"command": "capmotions.setVisualMode",
+				"title": "CapMotions: Set mode to VISUAL"
+			}
+		],
+		"configuration": {
+			"title": "CapMotions",
+			"properties": {
+				"capmotions.leader": {
+					"type": "string",
+					"default": "<space>",
+					"description": "The key to use as the leader key"
+				},
+				"capmotions.chords": {
+					"type": "object",
+					"default": {
+						"u": "undo",
+						"U": "redo",
+						"h": {
+							"normal": "cursorLeft",
+							"visual": "cursorLeftSelect"
+						},
+						"j": {
+							"normal": "cursorDown",
+							"visual": "cursorDownSelect"
+						},
+						"k": {
+							"normal": "cursorUp",
+							"visual": "cursorUpSelect"
+						},
+						"l": {
+							"normal": "cursorRight",
+							"visual": "cursorRightSelect"
+						},
+						"gg": {
+							"normal": "cursorTop",
+							"visual": "cursorTopSelect"
+						},
+						"G": {
+							"normal": "cursorBottom",
+							"visual": "cursorBottomSelect"
+						},
+						"^": {
+							"normal": "cursorHome",
+							"visual": "cursorHomeSelect"
+						},
+						"$": {
+							"normal": "cursorEnd",
+							"visual": "cursorEndSelect"
+						},
+						"w": {
+							"normal": "cursorWordStartRight",
+							"visual": "cursorWordStartRightSelect"
+						},
+						"e": {
+							"normal": "cursorWordEndRight",
+							"visual": "cursorWordEndRightSelect"
+						},
+						"b": {
+							"normal": "cursorWordStartLeft",
+							"visual": "cursorWordStartLeftSelect"
+						},
+						"ge": {
+							"normal": "cursorWordEndLeft",
+							"visual": "cursorWordEndLeftSelect"
+						},
+						"i": {
+							"normal": "capmotions.setInsertMode"
+						},
+						"v": {
+							"normal": "capmotions.setVisualMode",
+							"visual": "capmotions.setNormalMode"
+						},
+						"p": [
+							"editor.action.clipboardPasteAction",
+							"capmotions.setNormalMode"
+						],
+						"y": {
+							"visual": [
+								"editor.action.clipboardCopyAction",
+								"capmotions.setNormalMode"
+							]
+						},
+						"x": {
+							"visual": [
+								"editor.action.clipboardCutAction",
+								"capmotions.setNormalMode"
+							]
+						},
+						"yiw": {
+							"normal": [
+								"capmotions.saveSelections",
+								"cursorWordStartLeft",
+								"cursorWordEndRightSelect",
+								"editor.action.clipboardCopyAction",
+								"capmotions.restoreSelections"
+							]
+						},
+						"d": {
+							"visual": ["deleteLeft", "capmotions.setNormalMode"]
+						},
+						"dd": {
+							"normal": [
+								"editor.action.deleteLines",
+								"capmotions.setNormalMode"
+							]
+						},
+						"dw": {
+							"normal": [
+								"cursorWordStartRightSelect",
+								"deleteLeft",
+								"capmotions.setNormalMode"
+							]
+						},
+						"db": {
+							"normal": [
+								"cursorWordStartLeftSelect",
+								"deleteLeft",
+								"capmotions.setNormalMode"
+							]
+						},
+						"de": {
+							"normal": [
+								"cursorWordEndRightSelect",
+								"deleteLeft",
+								"capmotions.setNormalMode"
+							]
+						},
+						"dge": {
+							"normal": [
+								"cursorWordEndLeftSelect",
+								"deleteLeft",
+								"capmotions.setNormalMode"
+							]
+						},
+						"daw": {
+							"normal": [
+								"cursorWordEndLeft",
+								"cursorWordEndRightSelect",
+								"cursorWordStartRightSelect",
+								"deleteLeft"
+							]
+						},
+						"da(": {
+							"normal": ["capmotions.selectAroundParentheses", "deleteLeft"]
+						},
+						"da{": {
+							"normal": ["capmotions.selectAroundCurlyBraces", "deleteLeft"]
+						},
+						"da[": {
+							"normal": ["capmotions.selectAroundSquareBrackets", "deleteLeft"]
+						},
+						"da<": {
+							"normal": ["capmotions.selectAroundAngleBrackets", "deleteLeft"]
+						},
+						"da\"": {
+							"normal": ["capmotions.selectAroundDoubleQuotes", "deleteLeft"]
+						},
+						"da'": {
+							"normal": ["capmotions.selectAroundSingleQuotes", "deleteLeft"]
+						},
+						"diw": {
+							"normal": ["deleteInsideWord", "capmotions.setNormalMode"]
+						},
+						"di(": {
+							"normal": ["capmotions.selectInsideParentheses", "deleteLeft"]
+						},
+						"di{": {
+							"normal": ["capmotions.selectInsideCurlyBraces", "deleteLeft"]
+						},
+						"di[": {
+							"normal": ["capmotions.selectInsideSquareBrackets", "deleteLeft"]
+						},
+						"di<": {
+							"normal": ["capmotions.selectInsideAngleBrackets", "deleteLeft"]
+						},
+						"di\"": {
+							"normal": ["capmotions.selectInsideDoubleQuotes", "deleteLeft"]
+						},
+						"di'": {
+							"normal": ["capmotions.selectInsideSingleQuotes", "deleteLeft"]
+						},
+						"iw": {
+							"visual": ["cursorWordStartLeft", "cursorWordEndRightSelect"]
+						},
+						"i(": {
+							"visual": ["capmotions.selectInsideParentheses"]
+						},
+						"i{": {
+							"visual": ["capmotions.selectInsideCurlyBraces"]
+						},
+						"i[": {
+							"visual": ["capmotions.selectInsideSquareBrackets"]
+						},
+						"i<": {
+							"visual": ["capmotions.selectInsideAngleBrackets"]
+						},
+						"i\"": {
+							"visual": ["capmotions.selectInsideDoubleQuotes"]
+						},
+						"i'": {
+							"visual": ["capmotions.selectInsideSingleQuotes"]
+						},
+						"a(": {
+							"visual": ["capmotions.selectAroundParentheses"]
+						},
+						"a{": {
+							"visual": ["capmotions.selectAroundCurlyBraces"]
+						},
+						"a[": {
+							"visual": ["capmotions.selectAroundSquareBrackets"]
+						},
+						"a<": {
+							"visual": ["capmotions.selectAroundAngleBrackets"]
+						},
+						"a\"": {
+							"visual": ["capmotions.selectAroundDoubleQuotes"]
+						},
+						"a'": {
+							"visual": ["capmotions.selectAroundSingleQuotes"]
+						},
+						"ab": {
+							"visual": "editor.action.selectToBracket"
+						},
+						"s": {
+							"visual": "editor.action.smartSelect.expand"
+						},
+						"S": {
+							"visual": "editor.action.smartSelect.shrink"
+						},
+						"f": {
+							"normal": "capmotions.nextOccurrence",
+							"visual": "capmotions.nextOccurrenceSelect"
+						},
+						"F": {
+							"normal": "capmotions.prevOccurrence",
+							"visual": "capmotions.prevOccurrenceSelect"
+						},
+						"<leader>k": "editor.action.showHover",
+						"<leader>h": "workbench.action.focusLeftGroup",
+						"<leader>l": "workbench.action.focusRightGroup",
+						"<leader>L": "workbench.action.moveEditorToNextGroup",
+						"<leader>H": "workbench.action.moveEditorToPreviousGroup",
+						"<leader>gd": "editor.action.revealDefinition",
+						"<leader>gl": "workbench.action.gotoLine",
+						"<leader>tcu": "editor.action.transformToUppercase",
+						"<leader>tcl": "editor.action.transformToLowercase",
+						"<leader>tck": "editor.action.transformToKebabcase",
+						"<leader>tcc": "editor.action.transformToCamelcase",
+						"<leader>tcs": "editor.action.transformToSnakecase",
+						"<leader>tcp": "editor.action.transformToPascalcase",
+						"<leader>tct": "editor.action.transformToTitlecase"
+					}
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "pnpm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "pnpm run compile && pnpm run lint",
+		"lint": "eslint src",
+		"test": "vscode-test"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.95.0",
+		"@types/mocha": "^10.0.9",
+		"@types/node": "20.x",
+		"@typescript-eslint/eslint-plugin": "^8.10.0",
+		"@typescript-eslint/parser": "^8.7.0",
+		"eslint": "^9.13.0",
+		"typescript": "^5.6.3",
+		"@vscode/test-cli": "^0.0.10",
+		"@vscode/test-electron": "^2.4.1"
+	}
+}

@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import chords, { type Chord, type ChordMap } from "./chord-map";
+import { remapCapsLock } from "./utils/caps-lock-remapper";
 import {
 	cursorStyleMap,
 	isValidEnum,
@@ -29,9 +30,12 @@ export class Chords {
 			this.config.get("statusIndicator.priority"),
 		);
 
+	private killCapsLockWatcher?: () => void;
+
 	private chords: Record<Exclude<Mode, "insert">, ChordMap> = {
-		...chords,
-		...this.config.get("chords"),
+		normal: { ...chords.normal, ...this.config.get("normalMode.overrides") },
+		visual: { ...chords.visual, ...this.config.get("visualMode.overrides") },
+		leader: { ...chords.leader, ...this.config.get("leaderMode.overrides") },
 	};
 
 	private recordedChords: ChordDescriptor[] = [];
@@ -222,13 +226,6 @@ export class Chords {
 
 		this.statusBarMode.show();
 
-		// this.unsubscribeFromCapsLock = subscribeToCapsLock(
-		// 	this.context,
-		// 	(capsLockOn) => {
-		// 		this.mode = capsLockOn ? "normal" : "insert";
-		// 	},
-		// );
-
 		this.mode = "insert";
 
 		this.register("chords.repeatLastChord", this.repeatChord);
@@ -270,10 +267,22 @@ export class Chords {
 		this.register("chords.selectInsideRight", this.selectInsideRight);
 		this.register("chords.shrinkSelection", this.shrinkSelection);
 		this.register("chords.selectSymbolAtCursor", this.selectSymbolAtCursor);
+		this.register("chords.terminateCapsLockWatcher", () => {
+			this.killCapsLockWatcher?.();
+		});
+
+		if (process.platform === "win32" && this.config.get("remapCapsLock")) {
+			this.killCapsLockWatcher = remapCapsLock(this.context);
+			vscode.commands.executeCommand(
+				"setContext",
+				"chords.remappedCapsLock",
+				true,
+			);
+		}
 	}
 
 	destroy() {
-		// this.unsubscribeFromCapsLock();
+		this.killCapsLockWatcher?.();
 	}
 
 	// biome-ignore lint/suspicious/noExplicitAny: any is the appropriate type
@@ -328,7 +337,9 @@ export class Chords {
 		}
 
 		if (!this.hasValidChord()) {
-			console.log(`No valid chord '${this.chord}' for mode '${this.mode}'`);
+			console.log(
+				`[chords] No valid chord '${this.chord}' for mode '${this.mode}'`,
+			);
 			this.showWarning("(invalid chord)");
 			this.clearChord();
 			return;

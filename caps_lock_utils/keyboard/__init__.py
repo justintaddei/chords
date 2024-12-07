@@ -38,7 +38,6 @@ Then check the [API docs below](https://github.com/boppreh/keyboard#api) to see 
 
 ## Example
 
-Use as library:
 
 ```py
 import keyboard
@@ -67,133 +66,20 @@ keyboard.add_abbreviation('@@', 'my.long.email@example.com')
 keyboard.wait()
 ```
 
-Use as standalone module:
-
-```bash
-# Save JSON events to a file until interrupted:
-python -m keyboard > events.txt
-
-cat events.txt
-# {"event_type": "down", "scan_code": 25, "name": "p", "time": 1622447562.2994788, "is_keypad": false}
-# {"event_type": "up", "scan_code": 25, "name": "p", "time": 1622447562.431007, "is_keypad": false}
-# ...
-
-# Replay events
-python -m keyboard < events.txt
-```
-
 ## Known limitations:
 
 - Events generated under Windows don't report device id (`event.device == None`). [#21](https://github.com/boppreh/keyboard/issues/21)
 - Media keys on Linux may appear nameless (scan-code only) or not at all. [#20](https://github.com/boppreh/keyboard/issues/20)
 - Key suppression/blocking only available on Windows. [#22](https://github.com/boppreh/keyboard/issues/22)
-- To avoid depending on X, the Linux parts reads raw device files (`/dev/input/input*`) but this requires root.
-- Other applications, such as some games, may register hooks that swallow all key events. In this case `keyboard` will be unable to report events.
+- To avoid depending on X, the Linux parts reads raw device files (`/dev/input/input*`)
+but this requires root.
+- Other applications, such as some games, may register hooks that swallow all 
+key events. In this case `keyboard` will be unable to report events.
 - This program makes no attempt to hide itself, so don't use it for keyloggers or online gaming bots. Be responsible.
-- SSH connections forward only the text typed, not keyboard events. Therefore if you connect to a server or Raspberry PI that is running `keyboard` via SSH, the server will not detect your key events.
-
-## Common patterns and mistakes
-
-### Preventing the program from closing
-
-```py
-import keyboard
-keyboard.add_hotkey('space', lambda: print('space was pressed!'))
-# If the program finishes, the hotkey is not in effect anymore.
-
-# Don't do this! This will use 100% of your CPU.
-#while True: pass
-
-# Use this instead
-keyboard.wait()
-
-# or this
-import time
-while True:
-    time.sleep(1000000)
-```
-
-### Waiting for a key press one time
-
-```py
-import keyboard
-
-# Don't do this! This will use 100% of your CPU until you press the key.
-#
-#while not keyboard.is_pressed('space'):
-#    continue
-#print('space was pressed, continuing...')
-
-# Do this instead
-keyboard.wait('space')
-print('space was pressed, continuing...')
-```
-
-### Repeatedly waiting for a key press
-
-```py
-import keyboard
-
-# Don't do this!
-#
-#while True:
-#    if keyboard.is_pressed('space'):
-#        print('space was pressed!')
-#
-# This will use 100% of your CPU and print the message many times.
-
-# Do this instead
-while True:
-    keyboard.wait('space')
-    print('space was pressed! Waiting on it again...')
-
-# or this
-keyboard.add_hotkey('space', lambda: print('space was pressed!'))
-keyboard.wait()
-```
-
-### Invoking code when an event happens
-
-```py
-import keyboard
-
-# Don't do this! This will call `print('space')` immediately then fail when the key is actually pressed.
-#keyboard.add_hotkey('space', print('space was pressed'))
-
-# Do this instead
-keyboard.add_hotkey('space', lambda: print('space was pressed'))
-
-# or this
-def on_space():
-    print('space was pressed')
-keyboard.add_hotkey('space', on_space)
-
-# or this
-while True:
-    # Wait for the next event.
-    event = keyboard.read_event()
-    if event.event_type == keyboard.KEY_DOWN and event.name == 'space':
-        print('space was pressed')
-```
-
-### 'Press any key to continue'
-
-```py
-# Don't do this! The `keyboard` module is meant for global events, even when your program is not in focus.
-#import keyboard
-#print('Press any key to continue...')
-#keyboard.get_event()
-
-# Do this instead
-input('Press enter to continue...')
-
-# Or one of the suggestions from here
-# https://stackoverflow.com/questions/983354/how-to-make-a-script-wait-for-a-pressed-key
-```
 """
 from __future__ import print_function as _print_function
 
-version = '0.13.5'
+version = '0.13.4'
 
 import re as _re
 import itertools as _itertools
@@ -234,14 +120,6 @@ class _Event(_UninterruptibleEvent):
 import platform as _platform
 if _platform.system() == 'Windows':
     from. import _winkeyboard as _os_keyboard
-elif _platform.system() == 'Linux':
-    from. import _nixkeyboard as _os_keyboard
-elif _platform.system() == 'Darwin':
-    try:
-        from. import _darwinkeyboard as _os_keyboard
-    except ImportError:
-        # This can happen during setup if pyobj wasn't already installed
-        pass
 else:
     raise OSError("Unsupported platform '{}'".format(_platform.system()))
 
@@ -272,7 +150,7 @@ class _KeyboardListener(_GenericListener):
         #|
         #|             Type of event that triggered this modifier update.
         #|             |
-        #|             |         Type of key that triggered this modifier update.
+        #|             |         Type of key that triggered this modiier update.
         #|             |         |
         #|             |         |            Should we send a fake key press?
         #|             |         |            |
@@ -578,8 +456,8 @@ def hook(callback, suppress=False, on_remove=lambda: None):
 
     append(callback)
     def remove_():
-        _hooks.pop(callback, None)
-        _hooks.pop(remove_, None)
+        del _hooks[callback]
+        del _hooks[remove_]
         remove(callback)
         on_remove()
     _hooks[callback] = _hooks[remove_] = remove_
@@ -613,9 +491,9 @@ def hook_key(key, callback, suppress=False):
         store[scan_code].append(callback)
 
     def remove_():
-        _hooks.pop(callback, None)
-        _hooks.pop(key, None)
-        _hooks.pop(remove_ ,None)
+        del _hooks[callback]
+        del _hooks[key]
+        del _hooks[remove_]
         for scan_code in scan_codes:
             store[scan_code].remove(callback)
     _hooks[callback] = _hooks[key] = _hooks[remove_] = remove_
@@ -768,16 +646,16 @@ def add_hotkey(hotkey, callback, args=(), suppress=False, timeout=1, trigger_on_
         remove_step = _add_hotkey_step(handler, steps[0], suppress)
         def remove_():
             remove_step()
-            _hotkeys.pop(hotkey, None)
-            _hotkeys.pop(remove_, None)
-            _hotkeys.pop(callback, None)
+            del _hotkeys[hotkey]
+            del _hotkeys[remove_]
+            del _hotkeys[callback]
         # TODO: allow multiple callbacks for each hotkey without overwriting the
         # remover.
         _hotkeys[hotkey] = _hotkeys[remove_] = _hotkeys[callback] = remove_
         return remove_
 
     state = _State()
-    state.remove_catch_misses = lambda: None
+    state.remove_catch_misses = None
     state.remove_last_step = None
     state.suppressed_events = []
     state.last_update = float('-inf')
@@ -811,7 +689,6 @@ def add_hotkey(hotkey, callback, args=(), suppress=False, timeout=1, trigger_on_
         if new_index == 0:
             # This is done for performance reasons, avoiding a global key hook
             # that is always on.
-            state.remove_catch_misses()
             state.remove_catch_misses = lambda: None
         elif new_index == 1:
             state.remove_catch_misses()
@@ -852,9 +729,9 @@ def add_hotkey(hotkey, callback, args=(), suppress=False, timeout=1, trigger_on_
     def remove_():
         state.remove_catch_misses()
         state.remove_last_step()
-        _hotkeys.pop(hotkey, None)
-        _hotkeys.pop(remove_, None)
-        _hotkeys.pop(callback, None)
+        del _hotkeys[hotkey]
+        del _hotkeys[remove_]
+        del _hotkeys[callback]
     # TODO: allow multiple callbacks for each hotkey without overwriting the
     # remover.
     _hotkeys[hotkey] = _hotkeys[remove_] = _hotkeys[callback] = remove_
@@ -971,7 +848,7 @@ def write(text, delay=0, restore_state_after=True, exact=None):
             try:
                 entries = _os_keyboard.map_name(normalize_name(letter))
                 scan_code, modifiers = next(iter(entries))
-            except (KeyError, ValueError, StopIteration):
+            except (KeyError, ValueError):
                 _os_keyboard.type_unicode(letter)
                 continue
             
@@ -1234,12 +1111,9 @@ def add_word_listener(word, callback, triggers=['space'], match_suffix=False, ti
     hooked = hook(handler)
     def remove():
         hooked()
-        if word in _word_listeners:
-            del _word_listeners[word]
-        if handler in _word_listeners:
-            del _word_listeners[handler]
-        if remove in _word_listeners:
-            del _word_listeners[remove]
+        del _word_listeners[word]
+        del _word_listeners[handler]
+        del _word_listeners[remove]
     _word_listeners[word] = _word_listeners[handler] = _word_listeners[remove] = remove
     # TODO: allow multiple word listeners and removing them correctly.
     return remove

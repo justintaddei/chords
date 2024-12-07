@@ -49,11 +49,21 @@
 			{
 				"command": "chords.setVisualMode",
 				"title": "Chords: Set mode to VISUAL"
+			},
+			{
+				"command": "chords.terminateCapsLockWatcher",
+				"title": "Chords: Terminate Caps Lock Watcher",
+				"enablement": "isWindows && chords.remappedCapsLock"
 			}
 		],
 		"configuration": {
 			"title": "Chords",
 			"properties": {
+				"chords.remapCapsLock": {
+					"type": "boolean",
+					"default": false,
+					"description": "Remap Caps Lock to Esc (only works on Windows)"
+				},
 				"chords.statusIndicator.priority": {
 					"type": "number",
 					"default": 100000,
@@ -102,10 +112,20 @@
 					"default": "block-outline",
 					"description": "The cursor style to use in visual mode"
 				},
-				"chords.chords": {
+				"chords.normalMode.overrides": {
 					"type": "object",
 					"default": {},
-					"description": "Override or add to the default chords"
+					"description": "Override or add to the default normal mode chords"
+				},
+				"chords.visualMode.overrides": {
+					"type": "object",
+					"default": {},
+					"description": "Override or add to the default visual mode chords"
+				},
+				"chords.leaderMode.overrides": {
+					"type": "object",
+					"default": {},
+					"description": "Override or add to the default leader mode chords"
 				}
 			}
 		}

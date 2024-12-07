@@ -7,7 +7,7 @@ import { charMap } from "./utils/char-map";
 function overrideCommand(
 	context: vscode.ExtensionContext,
 	command: string,
-	callback: (...args: any[]) => any,
+	callback: (...args: unknown[]) => unknown,
 ) {
 	const disposable = vscode.commands.registerCommand(command, async (args) => {
 		if (!vscode.window.activeTextEditor) {
@@ -28,11 +28,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	chords = new Chords(context);
 
-	overrideCommand(context, "type", async (args: { text: string }) => {
+	overrideCommand(context, "type", async (args) => {
 		if (chords.mode === "insert") {
 			return vscode.commands.executeCommand("default:type", args);
 		}
 
+		// @ts-ignore
 		chords.onInput(charMap[args.text]);
 	});
 

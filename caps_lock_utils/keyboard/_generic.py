@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from threading import Thread, Lock
 import traceback
-import functools
 
 try:
     from queue import Queue

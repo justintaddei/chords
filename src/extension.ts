@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { CapMotions } from "./CapMotions";
+import { Chords } from "./Chords";
 import { charMap } from "./utils/char-map";
 
 function overrideCommand(
@@ -19,35 +19,35 @@ function overrideCommand(
 	context.subscriptions.push(disposable);
 }
 
+let chords: Chords;
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "capmotions" is now active!');
+	console.log("[chords] Extension activated");
 
-	const capMotions = new CapMotions(context);
+	chords = new Chords(context);
 
 	overrideCommand(context, "type", async (args: { text: string }) => {
-		if (capMotions.mode === "insert") {
+		if (chords.mode === "insert") {
 			return vscode.commands.executeCommand("default:type", args);
 		}
-		// swap case because capslock is on :)
-		const char =
-			args.text.toUpperCase() === args.text
-				? args.text.toLowerCase()
-				: args.text.toUpperCase();
 
-		capMotions.onInput(charMap[char]);
+		chords.onInput(charMap[args.text]);
 	});
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("capmotions.enter", () => {
-			capMotions.onInput("<enter>");
+		vscode.commands.registerCommand("chords.enter", () => {
+			chords.onInput("<enter>");
 		}),
-		vscode.commands.registerCommand("capmotions.backspace", () => {
-			capMotions.onInput("<backspace>");
+		vscode.commands.registerCommand("chords.backspace", () => {
+			chords.onInput("<backspace>");
 		}),
 	);
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	chords.destroy();
+	console.log("[chords] Extension deactivated");
+}

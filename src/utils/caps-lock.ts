@@ -20,6 +20,9 @@ export const subscribeToCapsLock = (
 	capsLockWatcher.on("exit", (code) => {
 		console.log("capslock_watcher exited with code :>>", code);
 	});
+
+	// todo
+	return capsLockWatcher.kill;
 };
 
 export const turnOffCapsLock = (context: vscode.ExtensionContext) => {

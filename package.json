@@ -1,24 +1,42 @@
 {
 	"name": "chords",
-	"displayName": "chords",
-	"description": "Vim-like motions when CapsLock is active",
+	"displayName": "Chords",
+	"description": "Vim-like navigation for VS Code",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.93.0"
 	},
-	"categories": ["Other"],
-	"activationEvents": ["onStartupFinished"],
+	"categories": [
+		"Keymaps"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"keybindings": [
 			{
 				"key": "enter",
-				"command": "chords.enter",
-				"when": "editorTextFocus && chords.mode !== 'insert'"
+				"command": "chords.input",
+				"args": "<enter>",
+				"when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
 			},
 			{
 				"key": "backspace",
-				"command": "chords.backspace",
+				"command": "chords.input",
+				"args": "<backspace>",
+				"when": "editorTextFocus && chords.mode !== 'insert'"
+			},
+			{
+				"key": "delete",
+				"command": "chords.input",
+				"args": "<delete>",
+				"when": "editorTextFocus && chords.mode !== 'insert'"
+			},
+			{
+				"key": "tab",
+				"command": "chords.input",
+				"args": "<tab>",
 				"when": "editorTextFocus && chords.mode !== 'insert'"
 			},
 			{
@@ -51,14 +69,29 @@
 				"title": "Chords: Set mode to VISUAL"
 			},
 			{
-				"command": "chords.terminateCapsLockWatcher",
-				"title": "Chords: Terminate Caps Lock Watcher",
+				"command": "chords.setLeaderMode",
+				"title": "Chords: Set mode to LEADER"
+			},
+			{
+				"command": "chords.killCapsLockRemapper",
+				"title": "Chords: Kill CapsLock Remapper",
 				"enablement": "isWindows && chords.remappedCapsLock"
 			}
 		],
 		"configuration": {
 			"title": "Chords",
 			"properties": {
+				"chords.defaultMode": {
+					"type": "string",
+					"enum": [
+						"insert",
+						"normal",
+						"visual",
+						"leader"
+					],
+					"default": "insert",
+					"description": "The mode that is selected when VS Code first opens"
+				},
 				"chords.remapCapsLock": {
 					"type": "boolean",
 					"default": false,
@@ -76,13 +109,23 @@
 				},
 				"chords.normalMode.lineNumbers": {
 					"type": "string",
-					"enum": ["off", "on", "relative", "interval"],
+					"enum": [
+						"off",
+						"on",
+						"relative",
+						"interval"
+					],
 					"default": "relative",
 					"description": "The line numbers to show in normal mode"
 				},
 				"chords.visualMode.lineNumbers": {
 					"type": "string",
-					"enum": ["off", "on", "relative", "interval"],
+					"enum": [
+						"off",
+						"on",
+						"relative",
+						"interval"
+					],
 					"default": "relative",
 					"description": "The line numbers to show in visual mode"
 				},

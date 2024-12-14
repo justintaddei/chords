@@ -38,11 +38,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("chords.enter", () => {
-			chords.onInput("<enter>");
-		}),
-		vscode.commands.registerCommand("chords.backspace", () => {
-			chords.onInput("<backspace>");
+		vscode.commands.registerCommand("chords.input", (char) => {
+			chords.onInput(char);
 		}),
 	);
 }

@@ -15,7 +15,7 @@ export const remapCapsLock = (context: vscode.ExtensionContext) => {
 		if (!code) return;
 
 		vscode.window.showErrorMessage(
-			`Caps Lock Watcher exited with code ${code}`,
+			`Caps Lock Remapper exited with code ${code}`,
 		);
 	});
 

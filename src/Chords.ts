@@ -30,7 +30,7 @@ export class Chords {
 			this.config.get("statusIndicator.priority"),
 		);
 
-	private killCapsLockWatcher?: () => void;
+	private killCapsLockRemapper?: () => void;
 
 	private chords: Record<Exclude<Mode, "insert">, ChordMap> = {
 		normal: { ...chords.normal, ...this.config.get("normalMode.overrides") },
@@ -132,7 +132,7 @@ export class Chords {
 		this.timedMessage = setTimeout(() => {
 			this.timedMessage = undefined;
 			this.clearMessage();
-		}, 1500);
+		}, 3000);
 	}
 
 	set cursorStyle(value: string | undefined) {
@@ -167,7 +167,7 @@ export class Chords {
 		vscode.window.activeTextEditor.options.lineNumbers = lineNumbersMap[value];
 	}
 
-	private _mode: Mode = "insert";
+	private _mode: Mode = this.config.get("defaultMode", "insert");
 	get mode() {
 		return this._mode;
 	}
@@ -226,7 +226,8 @@ export class Chords {
 
 		this.statusBarMode.show();
 
-		this.mode = "insert";
+		// apply the mode-specific styling
+		this.mode = this.mode;
 
 		this.register("chords.repeatLastChord", this.repeatChord);
 		this.register("chords.toggleRecording", () => {
@@ -249,17 +250,25 @@ export class Chords {
 		this.register("chords.saveSelections", this.saveSelections);
 		this.register("chords.restoreSelections", this.restoreSelections);
 		this.register("chords.restoreCursors", this.restoreCursors);
-		this.register("chords.nextOccurrence", () =>
-			this.awaitCapture((char) => this.cursorTo(char, "forward")),
+		this.register("chords.cursorToCharRight", () =>
+			this.awaitCapture((char) => {
+				this.cursorTo(char, "forward");
+			}),
 		);
-		this.register("chords.prevOccurrence", () =>
-			this.awaitCapture((char) => this.cursorTo(char, "backward")),
+		this.register("chords.cursorToCharLeft", () =>
+			this.awaitCapture((char) => {
+				this.cursorTo(char, "backward");
+			}),
 		);
-		this.register("chords.nextOccurrenceSelect", () =>
-			this.awaitCapture((char) => this.cursorToSelect(char, "forward")),
+		this.register("chords.cursorToCharRightSelect", () =>
+			this.awaitCapture((char) => {
+				this.cursorToSelect(char, "forward");
+			}),
 		);
-		this.register("chords.prevOccurrenceSelect", () =>
-			this.awaitCapture((char) => this.cursorToSelect(char, "backward")),
+		this.register("chords.cursorToCharLeftSelect", () =>
+			this.awaitCapture((char) => {
+				this.cursorToSelect(char, "backward");
+			}),
 		);
 		this.register("chords.selectAroundLeft", this.selectAroundLeft);
 		this.register("chords.selectAroundRight", this.selectAroundRight);
@@ -267,12 +276,16 @@ export class Chords {
 		this.register("chords.selectInsideRight", this.selectInsideRight);
 		this.register("chords.shrinkSelection", this.shrinkSelection);
 		this.register("chords.selectSymbolAtCursor", this.selectSymbolAtCursor);
-		this.register("chords.terminateCapsLockWatcher", () => {
-			this.killCapsLockWatcher?.();
+		this.register("chords.paragraphUp", this.paragraphUp);
+		this.register("chords.paragraphDown", this.paragraphDown);
+		this.register("chords.paragraphUpSelect", this.paragraphUpSelect);
+		this.register("chords.paragraphDownSelect", this.paragraphDownSelect);
+		this.register("chords.killCapsLockRemapper", () => {
+			this.killCapsLockRemapper?.();
 		});
 
 		if (process.platform === "win32" && this.config.get("remapCapsLock")) {
-			this.killCapsLockWatcher = remapCapsLock(this.context);
+			this.killCapsLockRemapper = remapCapsLock(this.context);
 			vscode.commands.executeCommand(
 				"setContext",
 				"chords.remappedCapsLock",
@@ -282,7 +295,7 @@ export class Chords {
 	}
 
 	destroy() {
-		this.killCapsLockWatcher?.();
+		this.killCapsLockRemapper?.();
 	}
 
 	// biome-ignore lint/suspicious/noExplicitAny: any is the appropriate type
@@ -292,29 +305,39 @@ export class Chords {
 		);
 	}
 
-	_onCapture: ((char: string) => void)[] = [];
+	_onCapture: ((char: string, canceled: boolean) => Promise<void>)[] = [];
 
 	waitingForCapture() {
 		return this._onCapture.length > 0;
 	}
 
 	awaitCapture(cb: (char: string) => void) {
-		this._onCapture.push(cb);
-		this.setMessage("(waiting for input)");
-		vscode.commands.executeCommand("setContext", "chords.capture", true);
+		return new Promise<void>((resolve, reject) => {
+			this._onCapture.push(async (c, canceled) => {
+				if (canceled) return reject(canceled);
+				await Promise.resolve(cb(c));
+				resolve();
+			});
+			this.setMessage("(waiting for input)");
+			vscode.commands.executeCommand("setContext", "chords.capture", true);
+		});
 	}
 
 	applyCapture(char: string) {
 		this.lastChord.capture = char;
 		for (const cb of this._onCapture) {
-			cb(char);
+			cb(char, false);
 		}
 		this.record(true);
-		this.clearCapture();
+		this.clearCapture(true);
 	}
 
-	clearCapture() {
+	clearCapture(fulfilled = false) {
 		vscode.commands.executeCommand("setContext", "chords.capture", false);
+		if (!fulfilled)
+			for (const cb of this._onCapture) {
+				cb("", true);
+			}
 		this._onCapture = [];
 		this.lastChord = { chord: [], mode: this.mode, capture: null };
 		this.clearMessage();
@@ -349,6 +372,13 @@ export class Chords {
 
 		if (motion in this.chords[this.mode]) {
 			for (let i = 0; i < count; i++) {
+				// the mode can be updated by commands (e.g. "2i"),
+				// so we need to check this on each iteration.
+				if ((this.mode as Mode) === "insert") {
+					this.showWarning("(insert cannot be repeated)");
+					return;
+				}
+
 				const command = this.chords[this.mode][motion];
 
 				const execCord = async (c: Chord) => {
@@ -516,6 +546,122 @@ export class Chords {
 		editor.revealRange(newSelections[0]);
 	}
 
+	private paragraphUp() {
+		if (!vscode.window.activeTextEditor) return;
+
+		const editor = vscode.window.activeTextEditor;
+		const { selections } = editor;
+		const newSelections: vscode.Selection[] = [];
+
+		for (const selection of selections) {
+			let currentLine = selection.active.line - 1;
+
+			if (currentLine < 0) {
+				newSelections.push(selection);
+				continue;
+			}
+
+			while (currentLine > 0) {
+				if (editor.document.lineAt(currentLine).isEmptyOrWhitespace) break;
+				currentLine--;
+			}
+
+			const nextPosition = selection.active.with(currentLine);
+			newSelections.push(new vscode.Selection(nextPosition, nextPosition));
+		}
+
+		vscode.window.activeTextEditor.selections = newSelections;
+
+		editor.revealRange(newSelections[0]);
+	}
+
+	private paragraphDown() {
+		if (!vscode.window.activeTextEditor) return;
+
+		const editor = vscode.window.activeTextEditor;
+		const { selections } = editor;
+		const newSelections: vscode.Selection[] = [];
+
+		for (const selection of selections) {
+			let currentLine = selection.active.line + 1;
+
+			if (currentLine > editor.document.lineCount) {
+				newSelections.push(selection);
+				continue;
+			}
+
+			while (currentLine < editor.document.lineCount) {
+				if (editor.document.lineAt(currentLine).isEmptyOrWhitespace) break;
+				currentLine++;
+			}
+
+			const nextPosition = selection.active.with(currentLine);
+			newSelections.push(new vscode.Selection(nextPosition, nextPosition));
+		}
+
+		vscode.window.activeTextEditor.selections = newSelections;
+
+		editor.revealRange(newSelections[0]);
+	}
+
+	private paragraphUpSelect() {
+		if (!vscode.window.activeTextEditor) return;
+
+		const editor = vscode.window.activeTextEditor;
+		const { selections } = editor;
+		const newSelections: vscode.Selection[] = [];
+
+		for (const selection of selections) {
+			let currentLine = selection.active.line - 1;
+
+			if (currentLine < 0) {
+				newSelections.push(selection);
+				continue;
+			}
+
+			while (currentLine > 0) {
+				if (editor.document.lineAt(currentLine).isEmptyOrWhitespace) break;
+				currentLine--;
+			}
+
+			const nextPosition = selection.active.with(currentLine);
+			newSelections.push(new vscode.Selection(selection.anchor, nextPosition));
+		}
+
+		vscode.window.activeTextEditor.selections = newSelections;
+
+		editor.revealRange(newSelections[0]);
+	}
+
+	private paragraphDownSelect() {
+		if (!vscode.window.activeTextEditor) return;
+
+		const editor = vscode.window.activeTextEditor;
+		const { selections } = editor;
+		const newSelections: vscode.Selection[] = [];
+
+		for (const selection of selections) {
+			let currentLine = selection.active.line + 1;
+
+			if (currentLine > editor.document.lineCount) {
+				newSelections.push(selection);
+				continue;
+			}
+
+			while (currentLine < editor.document.lineCount) {
+				if (editor.document.lineAt(currentLine).isEmptyOrWhitespace) break;
+				currentLine++;
+			}
+
+			const nextPosition = selection.active.with(currentLine);
+			newSelections.push(new vscode.Selection(selection.anchor, nextPosition));
+		}
+
+		vscode.window.activeTextEditor.selections = newSelections;
+
+		editor.revealRange(newSelections[0]);
+	}
+
 	private isBracketPair(left: string, right: string) {
 		const pairs = {
 			"(": ")",
@@ -636,5 +782,7 @@ export class Chords {
 		}
 
 		editor.selections = newSelections;
+
+		editor.revealRange(newSelections[0]);
 	}
 }

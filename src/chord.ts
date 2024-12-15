@@ -1,3 +1,6 @@
+import { get } from "./store";
+import type { Mode } from "./types";
+
 type ChordAction = string | { cmd: string; args: unknown[] };
 
 export type Chord = ChordAction | ChordAction[];
@@ -486,8 +489,32 @@ const leader = {
 	m: "editor.emmet.action.evaluateMathExpression",
 } satisfies ChordMap;
 
-export default {
+export const defaultChords = {
 	normal,
 	visual,
 	leader,
-} as const;
+	insert: {},
+} as const satisfies Record<Mode, ChordMap>;
+
+export const constructChord = (chord: string[] = get("chord")) => {
+	let count = "";
+	let motion = "";
+
+	for (const char of chord)
+		if (motion) motion += char;
+		else if (char.match(/^\d$/)) count += char;
+		else motion += char;
+
+	return [Number.parseInt(count), motion] as const;
+};
+
+export const isValid = (rawChord: string[] = get("chord")) => {
+	return Object.keys(defaultChords[get("mode")]).some((chord) => {
+		const [, motion] = constructChord(rawChord);
+		return chord.startsWith(motion);
+	});
+};
+
+export const getChord = (motion: string) => {
+	return get("chords")[get("mode")][motion];
+};

@@ -1,51 +1,33 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { Chords } from "./Chords";
-import { charMap } from "./utils/char-map";
-
-function overrideCommand(
-	context: vscode.ExtensionContext,
-	command: string,
-	callback: (...args: unknown[]) => unknown,
-) {
-	const disposable = vscode.commands.registerCommand(command, async (args) => {
-		if (!vscode.window.activeTextEditor) {
-			return vscode.commands.executeCommand(`default:${command}`, args);
-		}
-
-		callback(args);
-	});
-	context.subscriptions.push(disposable);
-}
-
-let chords: Chords;
+// import { onInput } from "./input-handler";
+// import { get } from "./store";
+import "./commands";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 	console.log("[chords] Extension activated");
 
-	chords = new Chords(context);
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("type", async (args) => {
+	// 		if (!vscode.window.activeTextEditor || get("mode") === "insert") {
+	// 			return vscode.commands.executeCommand("default:type", args);
+	// 		}
 
-	overrideCommand(context, "type", async (args) => {
-		if (chords.mode === "insert") {
-			return vscode.commands.executeCommand("default:type", args);
-		}
-
-		// @ts-ignore
-		chords.onInput(charMap[args.text]);
-	});
+	// 		onInput(args.text);
+	// 	}),
+	// );
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("chords.input", (char) => {
-			chords.onInput(char);
+			// onInput(char);
 		}),
 	);
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {
-	chords.destroy();
 	console.log("[chords] Extension deactivated");
 }

@@ -71,8 +71,6 @@ export const awaitCapture = (cb: (char: string) => void) => {
 };
 
 export const onInput = async (char: string) => {
-	if (get("mode") === "insert") return;
-
 	if (char === config().get("leader")) {
 		set("modeBeforeLeader", get("mode"));
 		set("mode", "leader");

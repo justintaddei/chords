@@ -52,6 +52,11 @@
 			},
 			{
 				"key": "escape",
+				"command": "chords.clearChord",
+				"when": "editorTextFocus && !suggestWidgetVisible && chords.chordVisible === true && chords.capture === false"
+			},
+			{
+				"key": "escape",
 				"command": "chords.clearCapture",
 				"when": "editorTextFocus && !suggestWidgetVisible && chords.capture === true"
 			},

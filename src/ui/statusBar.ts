@@ -68,6 +68,12 @@ subscribe(["mode", "recording"], ({ mode, recording }) => {
 subscribe(["chord"], ({ chord }) => {
 	const chordText = chord.join("");
 
+	vscode.commands.executeCommand(
+		"setContext",
+		"chords.chordVisible",
+		!!chordText,
+	);
+
 	if (chordText) setMessage(chordText);
 	else clearMessage();
 });

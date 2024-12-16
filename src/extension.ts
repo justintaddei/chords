@@ -2,23 +2,30 @@ import * as vscode from "vscode";
 import "./commands";
 import "./ui/editorStyles";
 import { onInput } from "./inputHandler";
-import { destroy, get, set } from "./store";
+import { destroy, get, set, subscribe } from "./store";
 import { initCapsLockRemapper } from "./utils/capsLockRemapper";
 
+let typeHandler: vscode.Disposable | undefined = undefined;
+
 export function activate(context: vscode.ExtensionContext) {
-	console.log("[chords] Extension activated");
+	console.log("[chords] activated");
 
 	set("context", context);
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("type", async (args) => {
-			if (!vscode.window.activeTextEditor || get("mode") === "insert") {
-				return vscode.commands.executeCommand("default:type", args);
-			}
-
+	const overrideTypeHandler = () => {
+		return vscode.commands.registerCommand("type", async (args) => {
 			onInput(args.text);
-		}),
-	);
+		});
+	};
+
+	subscribe(["mode"], ({ mode }) => {
+		if (mode === "insert") {
+			if (typeHandler) typeHandler.dispose();
+			typeHandler = undefined;
+		} else {
+			if (!typeHandler) typeHandler = overrideTypeHandler();
+		}
+	});
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("chords.input", (char) => {
@@ -30,6 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	console.log("[chords] Extension deactivated");
+	if (typeHandler) typeHandler.dispose();
 	destroy();
+
+	console.log("[chords] deactivated");
 }

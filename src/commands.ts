@@ -38,6 +38,8 @@ registerCmd("chords.highlightSelections", highlightSelections);
 
 registerCmd("chords.clearCapture", clearCapture);
 
+registerCmd("chords.clearChord", () => set("chord", []));
+
 registerCmd("chords.saveSelections", saveSelections);
 
 registerCmd("chords.restoreSelections", restoreSelections);

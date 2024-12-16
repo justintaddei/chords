@@ -1,14 +1,14 @@
 <div style="text-align:center;">
   <img src="./logo.png" width="150pxs">
   <h1 style="border:none;">Chords</h1>
-  <p>Keyboard navigation for VS Code, inspired by Vim.</p>
+  <p>Keyboard-centric navigation for VS Code, inspired by Vim.</p>
 </div>
 
 ---
 
 **Chords** enables keyboard-centric navigation, *heavily* inspired by Vim, built on top of the VS Code API.
 
-> The goal of this extension is not to run Vim inside of VS Code (the Vim and VSCode Neovim extensions already do that). Rather, the aim is to apply Vim's keyboard-first philosophy in a way that is idiomatic to VS Code. Most notably, first-class multi-cursor support all "motions" (which we will call "chords" from here onward). All chords are configurable, and extendable.
+> The goal of this extension is not to run Vim inside of VS Code (the Vim and VSCode Neovim extensions already do that). Rather, the aim is to apply Vim's keyboard-first philosophy in a way that is idiomatic to VS Code.
 
 ## INSERT Mode
 

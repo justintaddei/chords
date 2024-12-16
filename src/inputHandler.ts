@@ -144,10 +144,11 @@ disposable(
 	vscode.window.onDidChangeTextEditorSelection(({ selections }) => {
 		if (get("chordActive")) return;
 
-		if (selections.find((s) => !s.isEmpty)) {
-			if (get("mode") === "normal") {
-				set("mode", "visual");
-			}
-		}
+		const hasSelections = selections.some((s) => !s.isEmpty);
+
+		if (get("mode") === "normal" && hasSelections) return set("mode", "visual");
+
+		if (get("mode") === "visual" && !hasSelections)
+			return set("mode", "normal");
 	}),
 );

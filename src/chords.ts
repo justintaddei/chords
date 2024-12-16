@@ -39,8 +39,8 @@ const normal = {
 	">": "editor.action.insertCursorBelow",
 	"<": "editor.action.insertCursorAbove",
 	"g>": "editor.action.insertCursorAtLastLine",
-	m: "editor.action.addSelectionToNextFindMatch",
-	M: "editor.action.addSelectionToPreviousFindMatch",
+	m: ["editor.action.addSelectionToNextFindMatch", "chords.setVisualMode"],
+	M: ["editor.action.addSelectionToPreviousFindMatch", "chords.setVisualMode"],
 	// modifiers
 	"=": "editor.emmet.action.incrementNumberByOne",
 	"-": "editor.emmet.action.decrementNumberByOne",
@@ -489,6 +489,8 @@ const visual = {
 	D: "deleteRight",
 	// selections
 	s: "chords.selectSymbolAtCursor",
+	gs: "editor.action.smartSelect.expand",
+	gS: "editor.action.smartSelect.shrink",
 	aw: [
 		"cursorWordEndLeft",
 		"cursorWordEndRightSelect",

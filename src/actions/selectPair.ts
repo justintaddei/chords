@@ -12,6 +12,7 @@ const isBracketPair = (left: string, right: string) => {
 		"(": ")",
 		"[": "]",
 		"{": "}",
+		"<": ">",
 	};
 
 	return left in pairs && pairs[left as keyof typeof pairs] === right;

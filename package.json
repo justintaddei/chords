@@ -1,221 +1,241 @@
 {
-	"name": "chords",
-	"displayName": "Chords",
-	"description": "Vim-like navigation for VS Code",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.93.0"
-	},
-	"categories": [
-		"Keymaps"
-	],
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"keybindings": [
-			{
-				"key": "enter",
-				"command": "chords.input",
-				"args": "<enter>",
-				"when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
-			},
-			{
-				"key": "space",
-				"command": "chords.input",
-				"args": "<space>",
-				"when": "editorTextFocus && chords.mode !== 'insert'"
-			},
-			{
-				"key": "backspace",
-				"command": "chords.input",
-				"args": "<backspace>",
-				"when": "editorTextFocus && chords.mode !== 'insert'"
-			},
-			{
-				"key": "delete",
-				"command": "chords.input",
-				"args": "<delete>",
-				"when": "editorTextFocus && chords.mode !== 'insert'"
-			},
-			{
-				"key": "tab",
-				"command": "chords.input",
-				"args": "<tab>",
-				"when": "editorTextFocus && chords.mode !== 'insert'"
-			},
-			{
-				"key": "escape",
-				"command": "chords.setNormalMode",
-				"when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'normal' && chords.capture === false"
-			},
-			{
-				"key": "escape",
-				"command": "chords.clearChord",
-				"when": "editorTextFocus && !suggestWidgetVisible && chords.chordVisible === true && chords.capture === false"
-			},
-			{
-				"key": "escape",
-				"command": "chords.clearCapture",
-				"when": "editorTextFocus && !suggestWidgetVisible && chords.capture === true"
-			},
-			{
-				"key": "space enter",
-				"command": "togglePeekWidgetFocus",
-				"when": "!editorTextFocus && (inReferenceSearchEditor || referenceSearchVisible)"
-			}
-		],
-		"commands": [
-			{
-				"command": "chords.setInsertMode",
-				"title": "Chords: Set mode to INSERT"
-			},
-			{
-				"command": "chords.setNormalMode",
-				"title": "Chords: Set mode to NORMAL"
-			},
-			{
-				"command": "chords.setVisualMode",
-				"title": "Chords: Set mode to VISUAL"
-			},
-			{
-				"command": "chords.setLeaderMode",
-				"title": "Chords: Set mode to LEADER"
-			},
-			{
-				"command": "chords.killCapsLockRemapper",
-				"title": "Chords: Kill CapsLock Remapper",
-				"enablement": "isWindows && chords.remappedCapsLock"
-			}
-		],
-		"configuration": {
-			"title": "Chords",
-			"properties": {
-				"chords.defaultMode": {
-					"type": "string",
-					"enum": [
-						"insert",
-						"normal",
-						"visual",
-						"leader"
-					],
-					"default": "insert",
-					"description": "The mode that is selected when VS Code first opens"
-				},
-				"chords.remapCapsLock": {
-					"type": "boolean",
-					"default": false,
-					"description": "Remap Caps Lock to Esc (only works on Windows)"
-				},
-				"chords.statusIndicator.priority": {
-					"type": "number",
-					"default": 100000,
-					"description": "The priority of the status indicator (higher values appear further to the left)."
-				},
-				"chords.leader": {
-					"type": "string",
-					"default": "<space>",
-					"description": "The key to use as the leader key. Cannot be a modifier key."
-				},
-				"chords.normalMode.lineNumbers": {
-					"type": "string",
-					"enum": [
-						"off",
-						"on",
-						"relative",
-						"interval"
-					],
-					"default": "relative",
-					"description": "The line numbers to show in normal mode"
-				},
-				"chords.visualMode.lineNumbers": {
-					"type": "string",
-					"enum": [
-						"off",
-						"on",
-						"relative",
-						"interval"
-					],
-					"default": "relative",
-					"description": "The line numbers to show in visual mode"
-				},
-				"chords.normalMode.cursorStyle": {
-					"type": "string",
-					"enum": [
-						"line",
-						"block",
-						"underline",
-						"line-thin",
-						"underline-thin",
-						"block-outline"
-					],
-					"default": "block",
-					"description": "The cursor style to use in normal mode"
-				},
-				"chords.visualMode.cursorStyle": {
-					"type": "string",
-					"enum": [
-						"line",
-						"block",
-						"underline",
-						"line-thin",
-						"underline-thin",
-						"block-outline"
-					],
-					"default": "block-outline",
-					"description": "The cursor style to use in visual mode"
-				},
-				"chords.selectionHighlightBackgroundColor": {
-					"type": "string",
-					"default": "rgba(255, 255, 255, 0.5)",
-					"description": "The color to use for the selection highlight background"
-				},
-				"chords.selectionHighlightForegroundColor": {
-					"type": "string",
-					"default": "rgb(0,0,0)",
-					"description": "The color to use for the selection highlight foreground"
-				},
-				"chords.selectionHighlightDuration": {
-					"type": "number",
-					"default": 200,
-					"description": "The duration in milliseconds to show the selection highlight"
-				},
-				"chords.normalMode.overrides": {
-					"type": "object",
-					"default": {},
-					"description": "Override or add to the default normal mode chords"
-				},
-				"chords.visualMode.overrides": {
-					"type": "object",
-					"default": {},
-					"description": "Override or add to the default visual mode chords"
-				},
-				"chords.leaderMode.overrides": {
-					"type": "object",
-					"default": {},
-					"description": "Override or add to the default leader mode chords"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "pnpm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "pnpm run compile && pnpm run lint",
-		"lint": "eslint src",
-		"test": "vscode-test"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.95.0",
-		"@types/mocha": "^10.0.9",
-		"@types/node": "20.x",
-		"@typescript-eslint/eslint-plugin": "^8.10.0",
-		"@typescript-eslint/parser": "^8.7.0",
-		"eslint": "^9.13.0",
-		"typescript": "^5.6.3",
-		"@vscode/test-cli": "^0.0.10",
-		"@vscode/test-electron": "^2.4.1"
-	}
+  "name": "chords",
+  "displayName": "Chords",
+  "description": "Keyboard-centric navigation for VS Code",
+  "publisher": "justintaddei",
+  "author": {
+    "name": "Justin Taddei",
+    "url": "https://justintaddei.com"
+  },
+  "icon": "logo.png",
+  "galleryBanner": {
+    "color": "#181825",
+    "theme": "dark"
+  },
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Keymaps"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "keybindings": [
+      {
+        "key": "enter",
+        "command": "chords.input",
+        "args": "<enter>",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
+      },
+      {
+        "key": "space",
+        "command": "chords.input",
+        "args": "<space>",
+        "when": "editorTextFocus && chords.mode !== 'insert'"
+      },
+      {
+        "key": "backspace",
+        "command": "chords.input",
+        "args": "<backspace>",
+        "when": "editorTextFocus && chords.mode !== 'insert'"
+      },
+      {
+        "key": "delete",
+        "command": "chords.input",
+        "args": "<delete>",
+        "when": "editorTextFocus && chords.mode !== 'insert'"
+      },
+      {
+        "key": "tab",
+        "command": "chords.input",
+        "args": "<tab>",
+        "when": "editorTextFocus && chords.mode !== 'insert'"
+      },
+      {
+        "key": "escape",
+        "command": "chords.setNormalMode",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'normal' && chords.capture === false"
+      },
+      {
+        "key": "escape",
+        "command": "chords.clearChord",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.chordVisible === true && chords.capture === false"
+      },
+      {
+        "key": "escape",
+        "command": "chords.clearCapture",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.capture === true"
+      },
+      {
+        "key": "space enter",
+        "command": "togglePeekWidgetFocus",
+        "when": "!editorTextFocus && (inReferenceSearchEditor || referenceSearchVisible)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "chords.setInsertMode",
+        "title": "Chords: Set mode to INSERT"
+      },
+      {
+        "command": "chords.setNormalMode",
+        "title": "Chords: Set mode to NORMAL"
+      },
+      {
+        "command": "chords.setVisualMode",
+        "title": "Chords: Set mode to VISUAL"
+      },
+      {
+        "command": "chords.setLeaderMode",
+        "title": "Chords: Set mode to LEADER"
+      },
+      {
+        "command": "chords.killCapsLockRemapper",
+        "title": "Chords: Kill CapsLock Remapper",
+        "enablement": "isWindows && chords.remappedCapsLock"
+      }
+    ],
+    "configuration": {
+      "title": "Chords",
+      "properties": {
+        "chords.defaultMode": {
+          "type": "string",
+          "enum": [
+            "insert",
+            "normal",
+            "visual",
+            "leader"
+          ],
+          "default": "insert",
+          "description": "The mode that is selected when VS Code first opens"
+        },
+        "chords.remapCapsLock": {
+          "type": "boolean",
+          "default": false,
+          "description": "Remap Caps Lock to Esc (only works on Windows)"
+        },
+        "chords.statusIndicator.priority": {
+          "type": "number",
+          "default": 100000,
+          "description": "The priority of the status indicator (higher values appear further to the left)."
+        },
+        "chords.leader": {
+          "type": "string",
+          "default": "<space>",
+          "description": "The key to use as the leader key. Cannot be a modifier key."
+        },
+        "chords.normalMode.lineNumbers": {
+          "type": "string",
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
+          "default": "relative",
+          "description": "The line numbers to show in normal mode"
+        },
+        "chords.visualMode.lineNumbers": {
+          "type": "string",
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
+          "default": "relative",
+          "description": "The line numbers to show in visual mode"
+        },
+        "chords.normalMode.cursorStyle": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "block",
+          "description": "The cursor style to use in normal mode"
+        },
+        "chords.visualMode.cursorStyle": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "block-outline",
+          "description": "The cursor style to use in visual mode"
+        },
+        "chords.selectionHighlightBackgroundColor": {
+          "type": "string",
+          "default": "rgba(255, 255, 255, 0.5)",
+          "description": "The color to use for the selection highlight background"
+        },
+        "chords.selectionHighlightForegroundColor": {
+          "type": "string",
+          "default": "rgb(0,0,0)",
+          "description": "The color to use for the selection highlight foreground"
+        },
+        "chords.selectionHighlightDuration": {
+          "type": "number",
+          "default": 200,
+          "description": "The duration in milliseconds to show the selection highlight"
+        },
+        "chords.normalMode.overrides": {
+          "type": "object",
+          "default": {},
+          "description": "Override or add to the default normal mode chords"
+        },
+        "chords.visualMode.overrides": {
+          "type": "object",
+          "default": {},
+          "description": "Override or add to the default visual mode chords"
+        },
+        "chords.leaderMode.overrides": {
+          "type": "object",
+          "default": {},
+          "description": "Override or add to the default leader mode chords"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "publish": "pnpm vsce publish --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.93.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.13.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.3",
+    "vsce": "^2.15.0"
+  }
 }

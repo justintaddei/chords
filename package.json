@@ -22,6 +22,12 @@
 				"when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
 			},
 			{
+				"key": "space",
+				"command": "chords.input",
+				"args": "<space>",
+				"when": "editorTextFocus && chords.mode !== 'insert'"
+			},
+			{
 				"key": "backspace",
 				"command": "chords.input",
 				"args": "<backspace>",
@@ -154,6 +160,21 @@
 					],
 					"default": "block-outline",
 					"description": "The cursor style to use in visual mode"
+				},
+				"chords.selectionHighlightBackgroundColor": {
+					"type": "string",
+					"default": "rgba(255, 255, 255, 0.5)",
+					"description": "The color to use for the selection highlight background"
+				},
+				"chords.selectionHighlightForegroundColor": {
+					"type": "string",
+					"default": "rgb(0,0,0)",
+					"description": "The color to use for the selection highlight foreground"
+				},
+				"chords.selectionHighlightDuration": {
+					"type": "number",
+					"default": 200,
+					"description": "The duration in milliseconds to show the selection highlight"
 				},
 				"chords.normalMode.overrides": {
 					"type": "object",

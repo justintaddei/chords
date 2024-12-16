@@ -2,7 +2,7 @@ import vscode from "vscode";
 import { config } from "../config";
 import { subscribe } from "../store";
 import type { Mode } from "../types";
-import { disposable } from "../utils/vscode-subscription-manager";
+import { disposable } from "../utils/vscodeSubscriptionManager";
 
 let messageTimerId: NodeJS.Timeout | undefined = undefined;
 
@@ -21,14 +21,15 @@ const messageColors = {
 const modeIndicator = disposable(
 	vscode.window.createStatusBarItem(
 		vscode.StatusBarAlignment.Left,
-		config.get("statusIndicator.priority"),
+		config().get("statusIndicator.priority"),
 	),
 );
+modeIndicator.show();
 
 const message = disposable(
 	vscode.window.createStatusBarItem(
 		vscode.StatusBarAlignment.Left,
-		config.get("statusIndicator.priority"),
+		config().get("statusIndicator.priority"),
 	),
 );
 

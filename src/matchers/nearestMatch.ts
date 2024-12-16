@@ -5,6 +5,7 @@ export const nearestMatch = (
 	position: vscode.Position,
 	direction: "left" | "right",
 	inclusive = false,
+	acceptUnderCursor = false,
 ) => {
 	if (!vscode.window.activeTextEditor) return null;
 
@@ -14,8 +15,11 @@ export const nearestMatch = (
 
 	let index: number;
 
-	if (direction === "left") index = text.lastIndexOf(str, startIndex - 1);
-	else index = text.indexOf(str, startIndex + 1);
+	const initialOffset = acceptUnderCursor ? 0 : 1;
+
+	if (direction === "left")
+		index = text.lastIndexOf(str, startIndex - initialOffset);
+	else index = text.indexOf(str, startIndex + initialOffset);
 
 	if (index === -1) return null;
 

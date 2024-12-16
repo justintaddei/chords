@@ -6,7 +6,7 @@ export const updateSelections = (
 		editor: vscode.TextEditor,
 	) => vscode.Selection | null,
 ) => {
-	if (!vscode.window.activeTextEditor) return;
+	if (!vscode.window.activeTextEditor) return false;
 
 	const editor = vscode.window.activeTextEditor;
 
@@ -22,8 +22,10 @@ export const updateSelections = (
 		newSelections.push(modifiedSelection ?? selection);
 	}
 
+	if (!atLeastOneModified) return false;
+
 	editor.selections = newSelections;
 	editor.revealRange(newSelections[0]);
 
-	return atLeastOneModified;
+	return true;
 };

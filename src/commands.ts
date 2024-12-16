@@ -1,43 +1,40 @@
+import vscode from "vscode";
 import { collapseSelections } from "./actions/collapseSelections";
 import { cursorTo } from "./actions/cursorTo";
 import { cursorToParagraph } from "./actions/cursorToParagraph";
 import { restoreSelections } from "./actions/restoreSelections";
 import { saveSelections } from "./actions/saveSelections";
-import { selectEnds } from "./actions/selectEnds";
+import { selectPair } from "./actions/selectPair";
 import { selectSymbolAtCursor } from "./actions/selectSymbolAtCursor";
-import { shrinkSelection } from "./actions/shrinkSelection";
-import { awaitCapture, clearCapture } from "./input-handler";
+import { selectXMLTag } from "./actions/selectXMLTag";
+import { shrinkSelections } from "./actions/shrinkSelection";
+import { config } from "./config";
+import { awaitCapture, clearCapture } from "./inputHandler";
 import { repeatChord, replay } from "./recorder";
 import { get, set } from "./store";
-import { registerCmd } from "./utils/register-cmd";
+import { killCapsLockRemapper } from "./utils/capsLockRemapper";
+import { highlightSelections } from "./utils/highlightSelections";
+import { registerCmd } from "./utils/registerCmd";
 
 // todo: args validation for all commands. Using zod?
 
-console.log("[chords] commands registered");
-
 registerCmd("chords.repeatLastChord", repeatChord);
 
-registerCmd("chords.toggleRecording", () => {
-	set("recording", !get("recording"));
-});
+registerCmd("chords.toggleRecording", () =>
+	set("recording", !get("recording")),
+);
 
 registerCmd("chords.replay", replay);
 
-registerCmd("chords.setInsertMode", () => {
-	set("mode", "insert");
-});
+registerCmd("chords.setInsertMode", () => set("mode", "insert"));
 
-registerCmd("chords.setNormalMode", () => {
-	set("mode", "normal");
-});
+registerCmd("chords.setNormalMode", () => set("mode", "normal"));
 
-registerCmd("chords.setVisualMode", () => {
-	set("mode", "visual");
-});
+registerCmd("chords.setVisualMode", () => set("mode", "visual"));
 
-registerCmd("chords.setLeaderMode", () => {
-	set("mode", "leader");
-});
+registerCmd("chords.setLeaderMode", () => set("mode", "leader"));
+
+registerCmd("chords.highlightSelections", highlightSelections);
 
 registerCmd("chords.clearCapture", clearCapture);
 
@@ -74,47 +71,45 @@ registerCmd("chords.cursorToCharLeftSelect", () =>
 	}),
 );
 
-registerCmd("chords.selectAroundLeft", (ends: [string, string]) => {
-	selectEnds(ends, "left");
-});
+registerCmd("chords.selectAroundLeft", (...ends: [string, string]) =>
+	selectPair(ends, "left"),
+);
 
-registerCmd("chords.selectAroundRight", (ends: [string, string]) => {
-	selectEnds(ends, "right");
-});
+registerCmd("chords.selectAroundRight", (...ends: [string, string]) =>
+	selectPair(ends, "right"),
+);
 
-registerCmd("chords.selectInsideLeft", (ends: [string, string]) => {
-	selectEnds(ends, "left", true);
-});
+registerCmd("chords.selectAroundXMLTag", selectXMLTag);
 
-registerCmd("chords.selectInsideRight", (ends: [string, string]) => {
-	selectEnds(ends, "right", true);
-});
+registerCmd("chords.selectInsideLeft", (...ends: [string, string]) =>
+	selectPair(ends, "left", true),
+);
 
-registerCmd("chords.shrinkSelection", shrinkSelection);
+registerCmd("chords.selectInsideRight", (...ends: [string, string]) =>
+	selectPair(ends, "right", true),
+);
+
+registerCmd("chords.selectInsideXMLTag", () => selectXMLTag(true));
+
+registerCmd("chords.shrinkSelections", shrinkSelections);
 
 registerCmd("chords.selectSymbolAtCursor", selectSymbolAtCursor);
 
-registerCmd("chords.paragraphUp", () => {
-	cursorToParagraph("up");
-});
+registerCmd("chords.paragraphUp", () => cursorToParagraph("up"));
 
-registerCmd("chords.paragraphDown", () => {
-	cursorToParagraph("down");
-});
+registerCmd("chords.paragraphDown", () => cursorToParagraph("down"));
 
-registerCmd("chords.paragraphUpSelect", () => {
-	cursorToParagraph("up", true);
-});
+registerCmd("chords.paragraphUpSelect", () => cursorToParagraph("up", true));
 
-registerCmd("chords.paragraphDownSelect", () => {
-	cursorToParagraph("down", true);
-});
+registerCmd("chords.paragraphDownSelect", () =>
+	cursorToParagraph("down", true),
+);
 
-// registerCmd("chords.killCapsLockRemapper", () => {
-// 	this.killCapsLockRemapper?.();
-// });
+registerCmd("chords.replaceCharUnderCursor", () =>
+	awaitCapture(async (char) => {
+		await vscode.commands.executeCommand("deleteRight");
+		await vscode.commands.executeCommand("default:type", { text: char });
+	}),
+);
 
-// if (process.platform === "win32" && this.config.get("remapCapsLock")) {
-// 	this.killCapsLockRemapper = remapCapsLock(this.context);
-// 	vscode.commands.executeCommand("setContext", "chords.remappedCapsLock", true);
-// }
+registerCmd("chords.killCapsLockRemapper", killCapsLockRemapper);

@@ -1,15 +1,22 @@
 import vscode from "vscode";
 import { nearestMatch } from "../matchers/nearestMatch";
-import { showWarning } from "../ui/status-bar";
+import { showWarning } from "../ui/statusBar";
 import { updateSelections } from "../utils/updateSelections";
 
 export const cursorTo = (
 	string: string,
 	direction: "left" | "right",
 	select = false,
-): void => {
+	acceptUnderCursor = false,
+) => {
 	const matchFound = updateSelections((selection) => {
-		const match = nearestMatch(string, selection.active, direction, select);
+		const match = nearestMatch(
+			string,
+			selection.active,
+			direction,
+			select,
+			acceptUnderCursor,
+		);
 
 		if (!match) return null;
 
@@ -18,5 +25,7 @@ export const cursorTo = (
 			: new vscode.Selection(match, match);
 	});
 
-	if (matchFound) showWarning("(no match found)");
+	if (!matchFound) showWarning("(no match found)");
+
+	return matchFound;
 };

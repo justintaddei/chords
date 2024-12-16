@@ -1,11 +1,12 @@
+import vscode from "vscode";
 import {
 	type ChordDescriptor,
 	applyCapture,
 	onInput,
 	waitingForCapture,
-} from "./input-handler";
-import { get, set } from "./store";
-import { showWarning } from "./ui/status-bar";
+} from "./inputHandler";
+import { get, set, subscribe } from "./store";
+import { showWarning } from "./ui/statusBar";
 
 export const record = (update = false) => {
 	if (!get("recording")) return;
@@ -25,10 +26,12 @@ export const repeatChord = async (
 	set("chord", []);
 
 	set("mode", chord.mode);
+	set("lastChord", chord);
+	set("replaying", true);
 
 	for (const char of chord.chord) await onInput(char);
 
-	if (waitingForCapture() && chord.capture) applyCapture(chord.capture);
+	set("replaying", false);
 };
 
 export const replay = async () => {
@@ -36,3 +39,7 @@ export const replay = async () => {
 
 	for (const chord of get("recordedChords")) await repeatChord(chord);
 };
+
+subscribe(["recording"], ({ recording }) => {
+	if (recording) set("recordedChords", []);
+});

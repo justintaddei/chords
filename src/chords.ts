@@ -44,6 +44,7 @@ const normal = {
 	// modifiers
 	"=": "editor.emmet.action.incrementNumberByOne",
 	"-": "editor.emmet.action.decrementNumberByOne",
+	r: "chords.replaceCharUnderCursor",
 	// registers
 	u: "undo",
 	U: "redo",
@@ -53,18 +54,21 @@ const normal = {
 		"chords.saveSelections",
 		"cursorEndSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"y^": [
 		"chords.saveSelections",
 		"cursorHomeSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	ys: [
 		"chords.saveSelections",
 		"chords.selectSymbolAtCursor",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yy: [
@@ -72,18 +76,21 @@ const normal = {
 		"cursorHome",
 		"cursorEndSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yf: [
 		"chords.saveSelections",
 		"chords.cursorToCharRightSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yF: [
 		"chords.saveSelections",
 		"chords.cursorToCharLeftSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yaw: [
@@ -92,78 +99,98 @@ const normal = {
 		"cursorWordEndRightSelect",
 		"cursorWordStartRightSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yab: [
 		"chords.saveSelections",
 		"editor.action.selectToBracket",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	'ya"': [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ['"', '"'] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya'": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["'", "'"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya`": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["`", "`"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya(": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundLeft", args: ["(", ")"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya{": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundLeft", args: ["{", "}"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya[": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundLeft", args: ["[", "]"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya<": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundLeft", args: ["<", ">"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya)": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["(", ")"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya}": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["{", "}"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya]": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["[", "]"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"ya>": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectAroundRight", args: ["<", ">"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.restoreSelections",
+	],
+	yat: [
+		"chords.saveSelections",
+		"chords.selectAroundXMLTag",
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	yiw: [
@@ -171,72 +198,91 @@ const normal = {
 		"cursorWordStartLeft",
 		"cursorWordEndRightSelect",
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	'yi"': [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ['"', '"'] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi'": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["'", "'"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi`": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["`", "`"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi(": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideLeft", args: ["(", ")"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi{": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideLeft", args: ["{", "}"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi[": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideLeft", args: ["[", "]"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi<": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideLeft", args: ["<", ">"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi)": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["(", ")"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi}": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["{", "}"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi]": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["[", "]"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	"yi>": [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ["<", ">"] },
 		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.restoreSelections",
+	],
+	yit: [
+		"chords.saveSelections",
+		"chords.selectInsideXMLTag",
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
 	// registers -> cut
@@ -301,6 +347,7 @@ const normal = {
 		{ cmd: "chords.selectAroundRight", args: ["<", ">"] },
 		"editor.action.clipboardCutAction",
 	],
+	xat: ["chords.selectAroundXMLTag", "editor.action.clipboardCutAction"],
 	xiw: [
 		"cursorWordStartLeft",
 		"cursorWordEndRightSelect",
@@ -350,6 +397,7 @@ const normal = {
 		{ cmd: "chords.selectInsideRight", args: ["<", ">"] },
 		"editor.action.clipboardCutAction",
 	],
+	xit: ["chords.selectInsideXMLTag", "editor.action.clipboardCutAction"],
 	// deletions
 	d$: ["cursorEndSelect", "deleteLeft"],
 	"d^": ["cursorHomeSelect", "deleteLeft"],
@@ -379,10 +427,11 @@ const normal = {
 	"da}": [{ cmd: "chords.selectAroundRight", args: ["{", "}"] }, "deleteLeft"],
 	"da]": [{ cmd: "chords.selectAroundRight", args: ["[", "]"] }, "deleteLeft"],
 	"da>": [{ cmd: "chords.selectAroundRight", args: ["<", ">"] }, "deleteLeft"],
+	dat: ["chords.selectAroundXMLTag", "deleteLeft"],
 	diw: "deleteInsideWord",
 	dib: [
 		"editor.action.selectToBracket",
-		"chords.shrinkSelection",
+		"chords.shrinkSelections",
 		"deleteLeft",
 	],
 	'di"': [{ cmd: "chords.selectInsideRight", args: ['"', '"'] }, "deleteLeft"],
@@ -396,6 +445,8 @@ const normal = {
 	"di}": [{ cmd: "chords.selectInsideRight", args: ["{", "}"] }, "deleteLeft"],
 	"di]": [{ cmd: "chords.selectInsideRight", args: ["[", "]"] }, "deleteLeft"],
 	"di>": [{ cmd: "chords.selectInsideRight", args: ["<", ">"] }, "deleteLeft"],
+	dit: ["chords.selectInsideXMLTag", "deleteLeft"],
+	dB: "editor.action.removeBrackets",
 } satisfies ChordMap;
 
 const visual = {
@@ -427,8 +478,13 @@ const visual = {
 	u: "undo",
 	U: "redo",
 	p: ["editor.action.clipboardPasteAction", "chords.setNormalMode"],
-	y: ["editor.action.clipboardCopyAction", "chords.setNormalMode"],
+	y: [
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.setNormalMode",
+	],
 	x: ["editor.action.clipboardCutAction", "chords.setNormalMode"],
+	// deletions
 	d: "deleteLeft",
 	D: "deleteRight",
 	// selections
@@ -450,8 +506,9 @@ const visual = {
 	"a}": { cmd: "chords.selectAroundRight", args: ["{", "}"] },
 	"a]": { cmd: "chords.selectAroundRight", args: ["[", "]"] },
 	"a>": { cmd: "chords.selectAroundRight", args: ["<", ">"] },
+	at: "chords.selectAroundXMLTag",
 	iw: ["cursorWordStartLeft", "cursorWordEndRightSelect"],
-	ib: ["editor.action.selectToBracket", "chords.shrinkSelection"],
+	ib: ["editor.action.selectToBracket", "chords.shrinkSelections"],
 	'i"': { cmd: "chords.selectInsideRight", args: ['"', '"'] },
 	"i'": { cmd: "chords.selectInsideRight", args: ["'", "'"] },
 	"i`": { cmd: "chords.selectInsideRight", args: ["`", "`"] },
@@ -463,9 +520,11 @@ const visual = {
 	"i}": { cmd: "chords.selectInsideRight", args: ["{", "}"] },
 	"i]": { cmd: "chords.selectInsideRight", args: ["[", "]"] },
 	"i>": { cmd: "chords.selectInsideRight", args: ["<", ">"] },
+	it: "chords.selectInsideXMLTag",
 } satisfies ChordMap;
 
 const leader = {
+	i: "chords.setInsertMode",
 	k: "editor.action.showHover",
 	h: "workbench.action.focusLeftGroup",
 	l: "workbench.action.focusRightGroup",
@@ -479,6 +538,7 @@ const leader = {
 	gs: "workbench.action.gotoSymbol",
 	pd: "editor.action.peekDefinition",
 	"<enter>": "togglePeekWidgetFocus",
+	r: "editor.action.rename",
 	tcu: "editor.action.transformToUppercase",
 	tcl: "editor.action.transformToLowercase",
 	tck: "editor.action.transformToKebabcase",
@@ -505,11 +565,11 @@ export const constructChord = (chord: string[] = get("chord")) => {
 		else if (char.match(/^\d$/)) count += char;
 		else motion += char;
 
-	return [Number.parseInt(count), motion] as const;
+	return [count ? Number.parseInt(count) : 1, motion] as const;
 };
 
 export const isValid = (rawChord: string[] = get("chord")) => {
-	return Object.keys(defaultChords[get("mode")]).some((chord) => {
+	return Object.keys(get("chords")[get("mode")]).some((chord) => {
 		const [, motion] = constructChord(rawChord);
 		return chord.startsWith(motion);
 	});

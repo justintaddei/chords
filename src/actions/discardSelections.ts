@@ -1,12 +1,12 @@
 import vscode from "vscode";
 import { get, set } from "../store";
 
-export const saveSelections = () => {
+export const discardSelections = () => {
 	if (!vscode.window.activeTextEditor) return;
 
 	const selectionHistory = get("selectionHistory");
 
-	selectionHistory.push(vscode.window.activeTextEditor.selections);
+	selectionHistory.pop();
 
 	set("selectionHistory", selectionHistory);
 };

@@ -1,41 +1,48 @@
 import vscode from "vscode";
-import { type ChordMap, defaultChords } from "./chord";
+import { type ChordMap, defaultChords } from "./chords";
 import { config } from "./config";
-import type { ChordDescriptor } from "./input-handler";
+import type { ChordDescriptor } from "./inputHandler";
 import type { Mode } from "./types";
-import { disposable } from "./utils/vscode-subscription-manager";
+import {
+	initCapsLockRemapper,
+	killCapsLockRemapper,
+} from "./utils/capsLockRemapper";
 
 const initialStore = () => ({
-	mode: config.get("defaultMode", "insert") as Mode,
-	recording: false,
+	context: null as vscode.ExtensionContext | null,
+	mode: config().get("defaultMode", "insert") as Mode,
+	modeBeforeLeader: config().get("defaultMode", "insert") as Mode,
+	chordActive: false,
 	chord: [] as string[],
 	onCapture: [] as ((char: string, canceled: boolean) => Promise<void>)[],
-	context: null as vscode.ExtensionContext | null,
 	selectionHistory: [] as (readonly vscode.Selection[])[],
+	recording: false,
+	replaying: false,
+	recordedChords: [] as ChordDescriptor[],
 	lastChord: {
 		chord: [],
-		mode: config.get("defaultMode", "insert"),
+		mode: config().get("defaultMode", "insert"),
 		capture: null,
 	} as ChordDescriptor,
-	recordedChords: [] as ChordDescriptor[],
 	chords: {
 		normal: {
 			...defaultChords.normal,
-			...config.get("normalMode.overrides"),
+			...config().get("normalMode.overrides"),
 		},
 		visual: {
 			...defaultChords.visual,
-			...config.get("visualMode.overrides"),
+			...config().get("visualMode.overrides"),
 		},
 		leader: {
 			...defaultChords.leader,
-			...config.get("leaderMode.overrides"),
+			...config().get("leaderMode.overrides"),
 		},
 		insert: {},
 	} as Record<Mode, ChordMap>,
+	killCapsLockRemapper: null as (() => boolean) | null,
 });
 
-const store = initialStore();
+let store = initialStore();
 
 type Store = typeof store;
 
@@ -76,14 +83,26 @@ export const subscribe = <K extends [keyof Store, ...(keyof Store)[]]>(
 	};
 };
 
-const notifyAll = () => {
+export const notifyAll = () => {
 	for (const subs of subscribers.values()) for (const sub of subs) sub(store);
 };
 
-disposable(
-	vscode.workspace.onDidChangeConfiguration((e) => {
-		if (e.affectsConfiguration("chords")) {
-			notifyAll();
-		}
-	}),
-);
+export const destroy = () => {
+	killCapsLockRemapper();
+};
+
+vscode.workspace.onDidChangeConfiguration((e) => {
+	if (e.affectsConfiguration("chords")) {
+		const context = get("context");
+
+		destroy();
+		store = initialStore();
+
+		set("context", context);
+
+		notifyAll();
+		initCapsLockRemapper();
+
+		console.log("[chords] configuration reloaded");
+	}
+});

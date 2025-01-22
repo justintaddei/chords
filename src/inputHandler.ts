@@ -1,11 +1,12 @@
 import vscode from "vscode";
 import { collapseSelections } from "./actions/collapseSelections";
-import { type Chord, constructChord, getChord, isValid } from "./chords";
+import type { Chord } from "./chords";
 import { config } from "./config";
 import { record } from "./recorder";
 import { get, set, subscribe } from "./store";
 import type { Mode } from "./types";
 import { setMessage, showWarning } from "./ui/statusBar";
+import { constructChord, getChord, isValid } from "./utils/chords";
 import { disposable } from "./utils/vscodeSubscriptionManager";
 
 export type ChordDescriptor = {

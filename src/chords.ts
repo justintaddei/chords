@@ -1,4 +1,3 @@
-import { get } from "./store";
 import type { Mode } from "./types";
 
 type ChordAction = string | { cmd: string; args: unknown[] };
@@ -40,7 +39,6 @@ const normal = {
 	F: "chords.cursorToCharLeft",
 	">": "editor.action.insertCursorBelow",
 	"<": "editor.action.insertCursorAbove",
-	"g>": "editor.action.insertCursorAtLastLine",
 	m: ["editor.action.addSelectionToNextFindMatch", "chords.setVisualMode"],
 	M: ["editor.action.addSelectionToPreviousFindMatch", "chords.setVisualMode"],
 	// modifiers
@@ -648,7 +646,6 @@ const visual = {
 	F: "chords.cursorToCharLeftSelect",
 	">": "editor.action.insertCursorBelow",
 	"<": "editor.action.insertCursorAbove",
-	"g>": "editor.action.insertCursorAtLastLine",
 	m: "editor.action.addSelectionToNextFindMatch",
 	M: "editor.action.addSelectionToPreviousFindMatch",
 	// registers
@@ -736,27 +733,3 @@ export const defaultChords = {
 	leader,
 	insert: {},
 } as const satisfies Record<Mode, ChordMap>;
-
-export const constructChord = (chord: string[] = get("chord")) => {
-	let count = "";
-	let motion = "";
-
-	for (const char of chord) {
-		if (motion) motion += char;
-		else if (char.match(/^\d$/)) count += char;
-		else motion += char;
-	}
-
-	return [count ? Number.parseInt(count) : 1, motion] as const;
-};
-
-export const isValid = (rawChord: string[] = get("chord")) => {
-	return Object.keys(get("chords")[get("mode")]).some((chord) => {
-		const [, motion] = constructChord(rawChord);
-		return chord.startsWith(motion);
-	});
-};
-
-export const getChord = (motion: string) => {
-	return get("chords")[get("mode")][motion];
-};

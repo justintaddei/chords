@@ -1,0 +1,200 @@
+@import url("https://unpkg.com/@catppuccin/palette/css/catppuccin.css");
+
+:root {
+	interpolate-size: allow-keywords;
+}
+
+body {
+	font-family: "Fira Code", serif;
+	font-optical-sizing: auto;
+	font-weight: normal;
+	font-style: normal;
+	background: var(--ctp-mocha-base);
+	color: var(--ctp-mocha-text);
+	padding: 0 15%;
+	user-select: none;
+}
+
+header {
+	text-align: center;
+}
+
+ul,
+ol {
+	list-style: none;
+}
+
+ul,
+ol,
+li,
+h2,
+h3,
+p {
+	padding: 0;
+	margin: 0;
+}
+
+.normal,
+.visual,
+.leader {
+	margin-bottom: 2em;
+	height: auto;
+	transition: height 0.1s ease-out;
+	overflow: hidden;
+	position: relative;
+	padding-left: 1em;
+
+	&::before {
+		content: "";
+		display: block;
+		height: 100%;
+		width: 3px;
+		border-radius: 2px;
+		background: var(--color);
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	h2 {
+		text-transform: uppercase;
+		color: var(--color);
+		margin-bottom: 0.5em;
+	}
+
+	&:not(&:has(.motion:not(.hidden))) {
+		height: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		margin: 0;
+	}
+}
+
+.normal {
+	--color: var(--ctp-mocha-green);
+}
+
+.visual {
+	--color: var(--ctp-mocha-peach);
+}
+
+.leader {
+	--color: var(--ctp-mocha-mauve);
+}
+
+h3 {
+	margin-bottom: 1em;
+}
+
+li:has(> h3) {
+	border-bottom: 1px solid var(--ctp-mocha-surface0);
+	margin-bottom: 1em;
+}
+
+kbd {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 0.75em;
+	width: 2em;
+	height: 2em;
+	border-radius: 4px;
+	box-shadow: 0 0.25em 0 0 var(--ctp-mocha-surface0);
+	background: var(--ctp-mocha-surface1);
+	font-size: 20px;
+
+	&.special {
+		width: auto;
+		padding: 0 0.5em;
+		text-transform: uppercase;
+	}
+}
+
+ul li p {
+	&::before {
+		content: counter(list-item);
+		display: flex;
+		align-items: center;
+		padding: 0.75em 1em;
+		margin-right: 1em;
+		border-radius: 4px 0 0 4px;
+		background: var(--color);
+		color: var(--ctp-mocha-base);
+		font-weight: bold;
+	}
+
+	background: var(--ctp-mocha-surface0);
+	border-radius: 4px;
+	width: fit-content;
+	margin-bottom: 1em;
+	display: flex;
+
+	span {
+		padding: 0.75em 0.75em 0.75em 0;
+	}
+}
+
+.single {
+	display: flex;
+	align-items: center;
+	p::before {
+		display: none;
+	}
+	p span {
+		padding: 0.5em 0.75em;
+		border-radius: 4px;
+	}
+}
+
+.motion.hidden {
+	height: 0;
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+
+.motion {
+	height: auto;
+	transition: height 0.1s ease-out;
+	overflow: hidden;
+}
+
+.motion:not(.single) {
+	cursor: pointer;
+
+	&:not(.open) {
+		ol {
+			height: 0;
+		}
+	}
+
+	&.open .count {
+		opacity: 0.1;
+	}
+
+	.count {
+		transition: opacity 0.1s linear;
+	}
+
+	ol {
+		transition: height 0.1s ease-out;
+		overflow: hidden;
+		height: auto;
+	}
+}
+
+input {
+	width: 100%;
+	padding: 0.75em;
+	border-radius: 4px;
+	margin: 1em 0;
+	border: none;
+	background: var(--ctp-mocha-surface0);
+	color: var(--ctp-mocha-text);
+	font-size: 20px;
+	outline: none;
+
+	&:focus-visible {
+		outline: 1px solid var(--ctp-mocha-text);
+	}
+}

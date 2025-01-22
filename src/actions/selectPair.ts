@@ -1,25 +1,12 @@
 import vscode from "vscode";
 import { findQuoteRange, quoteRanges } from "../matchers/quotes";
+import { isBracketPair, isQuotePair } from "../utils/charPairs";
 import { updateSelections } from "../utils/updateSelections";
 import { cursorTo } from "./cursorTo";
 import { discardSelections } from "./discardSelections";
 import { restoreSelections } from "./restoreSelections";
 import { saveSelections } from "./saveSelections";
 import { shrinkSelections } from "./shrinkSelection";
-
-const isBracketPair = (left: string, right: string) => {
-	const pairs = {
-		"(": ")",
-		"[": "]",
-		"{": "}",
-		"<": ">",
-	};
-
-	return left in pairs && pairs[left as keyof typeof pairs] === right;
-};
-
-const isQuotePair = (left: string, right: string) =>
-	left === right && ['"', "'", "`"].includes(left);
 
 export const selectPair = async (
 	ends: [string, string],

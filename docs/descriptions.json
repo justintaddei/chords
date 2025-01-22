@@ -1,0 +1,1182 @@
+{
+  "normal": {
+    ".": [
+      "Repeat the previous chord"
+    ],
+    "q": [
+      "Toggle macro recording"
+    ],
+    "@q": [
+      "Replay the last recorded macro"
+    ],
+    "i": [
+      "Enter insert mode"
+    ],
+    "a": [
+      "Move the cursor right",
+      "Enter insert mode"
+    ],
+    "I": [
+      "Move the cursor to the start of the line",
+      "Enter insert mode"
+    ],
+    "A": [
+      "Move the cursor to the end of the line",
+      "Enter insert mode"
+    ],
+    "o": [
+      "Insert a line after the current one",
+      "Enter insert mode"
+    ],
+    "O": [
+      "Insert a line before the current one",
+      "Enter insert mode"
+    ],
+    "v": [
+      "Enter visual mode"
+    ],
+    "h": [
+      "Move the cursor left"
+    ],
+    "j": [
+      "Move the cursor down"
+    ],
+    "k": [
+      "Move the cursor up"
+    ],
+    "l": [
+      "Move the cursor right"
+    ],
+    "H": [
+      "Move the cursor to the start of the line"
+    ],
+    "J": [
+      "Move the cursor down one paragraph"
+    ],
+    "K": [
+      "Move the cursor up one paragraph"
+    ],
+    "L": [
+      "Move the cursor to the end of the line"
+    ],
+    "gg": [
+      "Move the cursor to the first line of the document"
+    ],
+    "G": [
+      "Move the cursor to the last line of the document"
+    ],
+    "^": [
+      "Move the cursor to the start of the line"
+    ],
+    "$": [
+      "Move the cursor to the end of the line"
+    ],
+    "w": [
+      "Move the cursor to the start of the next word"
+    ],
+    "e": [
+      "Move the cursor to the end of the next word"
+    ],
+    "b": [
+      "Move the cursor to the start of the previous word"
+    ],
+    "ge": [
+      "Move the cursor to the end of the previous word"
+    ],
+    "%": [
+      "Move the cursor to the matching bracket"
+    ],
+    "f": [
+      "Wait for a character to be typed, then search right for it and move the cursor to it"
+    ],
+    "F": [
+      "Wait for a character to be typed, then search left for it and move the cursor to it"
+    ],
+    ">": [
+      "Insert a cursor below the current one"
+    ],
+    "<": [
+      "Insert a cursor above the current one"
+    ],
+    "m": [
+      "Add the next occurrence of the current selection to the selections",
+      "Enter visual mode"
+    ],
+    "M": [
+      "Add the previous occurrence of the current selection to the selections",
+      "Enter visual mode"
+    ],
+    "=": [
+      "Increment the number under the cursor by one"
+    ],
+    "-": [
+      "Decrement the number under the cursor by one"
+    ],
+    "r": [
+      "Wait for a character to be typed, then replace the character under the cursor with it"
+    ],
+    "u": [
+      "Undo the last action",
+      "Restore the cursors to the last saved position"
+    ],
+    "U": [
+      "Redo the last undone action"
+    ],
+    "p": [
+      "Paste from clipboard"
+    ],
+    "yL": [
+      "Save the current selections to the stack",
+      "Select to the end of the line",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "y$": [
+      "Save the current selections to the stack",
+      "Select to the end of the line",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yH": [
+      "Save the current selections to the stack",
+      "Select to the start of the line",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "y^": [
+      "Save the current selections to the stack",
+      "Select to the start of the line",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ys": [
+      "Save the current selections to the stack",
+      "Select the symbol under the cursor",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yy": [
+      "Save the current selections to the stack",
+      "Move the cursor to the start of the line",
+      "Select to the end of the line",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yf": [
+      "Save the current selections to the stack",
+      "Wait for a character to be typed, then search right for it and select to it",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yF": [
+      "Save the current selections to the stack",
+      "Wait for a character to be typed, then search left for it and select to it",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yaw": [
+      "Save the current selections to the stack",
+      "Move the cursor to the end of the previous word",
+      "Select to the end of the next word",
+      "Select to the start of the next word",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yab": [
+      "Save the current selections to the stack",
+      "Select around the nearest bracket pair",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya\"": [
+      "Save the current selections to the stack",
+      "Searching right, select around double quotes",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya'": [
+      "Save the current selections to the stack",
+      "Searching right, select around single quotes",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya`": [
+      "Save the current selections to the stack",
+      "Searching right, select around backticks",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya(": [
+      "Save the current selections to the stack",
+      "Searching left, select around ( and ) brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya{": [
+      "Save the current selections to the stack",
+      "Searching left, select around { and } brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya[": [
+      "Save the current selections to the stack",
+      "Searching left, select around [ and ] brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya<": [
+      "Save the current selections to the stack",
+      "Searching left, select around < and > brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya)": [
+      "Save the current selections to the stack",
+      "Searching right, select around ( and ) brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya}": [
+      "Save the current selections to the stack",
+      "Searching right, select around { and } brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya]": [
+      "Save the current selections to the stack",
+      "Searching right, select around [ and ] brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "ya>": [
+      "Save the current selections to the stack",
+      "Searching right, select around < and > brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yat": [
+      "Save the current selections to the stack",
+      "Select around the XML tag under the cursor",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yiw": [
+      "Save the current selections to the stack",
+      "Move the cursor to the start of the previous word",
+      "Select to the end of the next word",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yib": [
+      "Save the current selections to the stack",
+      "Select around the nearest bracket pair",
+      "Shrink the selections by one character in each direction",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi\"": [
+      "Save the current selections to the stack",
+      "Searching right, select between double quotes",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi'": [
+      "Save the current selections to the stack",
+      "Searching right, select between single quotes",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi`": [
+      "Save the current selections to the stack",
+      "Searching right, select between backticks",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi(": [
+      "Save the current selections to the stack",
+      "Searching left, select between ( and ) brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi{": [
+      "Save the current selections to the stack",
+      "Searching left, select between { and } brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi[": [
+      "Save the current selections to the stack",
+      "Searching left, select between [ and ] brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi<": [
+      "Save the current selections to the stack",
+      "Searching left, select between < and > brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi)": [
+      "Save the current selections to the stack",
+      "Searching right, select between ( and ) brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi}": [
+      "Save the current selections to the stack",
+      "Searching right, select between { and } brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi]": [
+      "Save the current selections to the stack",
+      "Searching right, select between [ and ] brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yi>": [
+      "Save the current selections to the stack",
+      "Searching right, select between < and > brackets",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "yit": [
+      "Save the current selections to the stack",
+      "Select inside the XML tag under the cursor",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "xL": [
+      "Select to the end of the line",
+      "Cut to clipboard"
+    ],
+    "x$": [
+      "Select to the end of the line",
+      "Cut to clipboard"
+    ],
+    "xH": [
+      "Select to the start of the line",
+      "Cut to clipboard"
+    ],
+    "x^": [
+      "Select to the start of the line",
+      "Cut to clipboard"
+    ],
+    "xs": [
+      "Select the symbol under the cursor",
+      "Cut to clipboard"
+    ],
+    "xx": [
+      "Move the cursor to the start of the line",
+      "Select to the end of the line",
+      "Cut to clipboard"
+    ],
+    "xf": [
+      "Wait for a character to be typed, then search right for it and select to it",
+      "Cut to clipboard"
+    ],
+    "xF": [
+      "Wait for a character to be typed, then search left for it and select to it",
+      "Cut to clipboard"
+    ],
+    "xaw": [
+      "Move the cursor to the end of the previous word",
+      "Select to the end of the next word",
+      "Select to the start of the next word",
+      "Cut to clipboard"
+    ],
+    "xab": [
+      "Select around the nearest bracket pair",
+      "Cut to clipboard"
+    ],
+    "xa\"": [
+      "Searching right, select around double quotes",
+      "Cut to clipboard"
+    ],
+    "xa'": [
+      "Searching right, select around single quotes",
+      "Cut to clipboard"
+    ],
+    "xa`": [
+      "Searching right, select around backticks",
+      "Cut to clipboard"
+    ],
+    "xa(": [
+      "Searching left, select around ( and ) brackets",
+      "Cut to clipboard"
+    ],
+    "xa{": [
+      "Searching left, select around { and } brackets",
+      "Cut to clipboard"
+    ],
+    "xa[": [
+      "Searching left, select around [ and ] brackets",
+      "Cut to clipboard"
+    ],
+    "xa<": [
+      "Searching left, select around < and > brackets",
+      "Cut to clipboard"
+    ],
+    "xa)": [
+      "Searching right, select around ( and ) brackets",
+      "Cut to clipboard"
+    ],
+    "xa}": [
+      "Searching right, select around { and } brackets",
+      "Cut to clipboard"
+    ],
+    "xa]": [
+      "Searching right, select around [ and ] brackets",
+      "Cut to clipboard"
+    ],
+    "xa>": [
+      "Searching right, select around < and > brackets",
+      "Cut to clipboard"
+    ],
+    "xat": [
+      "Select around the XML tag under the cursor",
+      "Cut to clipboard"
+    ],
+    "xiw": [
+      "Move the cursor to the start of the previous word",
+      "Select to the end of the next word",
+      "Cut to clipboard"
+    ],
+    "xi\"": [
+      "Searching right, select between double quotes",
+      "Cut to clipboard"
+    ],
+    "xi'": [
+      "Searching right, select between single quotes",
+      "Cut to clipboard"
+    ],
+    "xi`": [
+      "Searching right, select between backticks",
+      "Cut to clipboard"
+    ],
+    "xi(": [
+      "Searching left, select between ( and ) brackets",
+      "Cut to clipboard"
+    ],
+    "xi{": [
+      "Searching left, select between { and } brackets",
+      "Cut to clipboard"
+    ],
+    "xi[": [
+      "Searching left, select between [ and ] brackets",
+      "Cut to clipboard"
+    ],
+    "xi<": [
+      "Searching left, select between < and > brackets",
+      "Cut to clipboard"
+    ],
+    "xi)": [
+      "Searching right, select between ( and ) brackets",
+      "Cut to clipboard"
+    ],
+    "xi}": [
+      "Searching right, select between { and } brackets",
+      "Cut to clipboard"
+    ],
+    "xi]": [
+      "Searching right, select between [ and ] brackets",
+      "Cut to clipboard"
+    ],
+    "xi>": [
+      "Searching right, select between < and > brackets",
+      "Cut to clipboard"
+    ],
+    "xit": [
+      "Select inside the XML tag under the cursor",
+      "Cut to clipboard"
+    ],
+    "<backspace>": [
+      "Delete",
+      "Enter insert mode"
+    ],
+    "dL": [
+      "Select to the end of the line",
+      "Delete"
+    ],
+    "d$": [
+      "Select to the end of the line",
+      "Delete"
+    ],
+    "dH": [
+      "Select to the start of the line",
+      "Delete"
+    ],
+    "d^": [
+      "Select to the start of the line",
+      "Delete"
+    ],
+    "ds": [
+      "Select the symbol under the cursor",
+      "Delete"
+    ],
+    "dd": [
+      "Delete the line under the cursor"
+    ],
+    "df": [
+      "Wait for a character to be typed, then search right for it and select to it",
+      "Delete"
+    ],
+    "dF": [
+      "Wait for a character to be typed, then search left for it and select to it",
+      "Delete"
+    ],
+    "dw": [
+      "Delete the word to the right of the cursor"
+    ],
+    "db": [
+      "Select to the start of the previous word",
+      "Delete"
+    ],
+    "de": [
+      "Select to the end of the next word",
+      "Delete"
+    ],
+    "dge": [
+      "Select to the end of the previous word",
+      "Delete"
+    ],
+    "daw": [
+      "Move the cursor to the end of the previous word",
+      "Select to the end of the next word",
+      "Select to the start of the next word",
+      "Delete"
+    ],
+    "dab": [
+      "Select around the nearest bracket pair",
+      "Delete"
+    ],
+    "da\"": [
+      "Searching right, select around double quotes",
+      "Delete"
+    ],
+    "da'": [
+      "Searching right, select around single quotes",
+      "Delete"
+    ],
+    "da`": [
+      "Searching right, select around backticks",
+      "Delete"
+    ],
+    "da(": [
+      "Searching left, select around ( and ) brackets",
+      "Delete"
+    ],
+    "da{": [
+      "Searching left, select around { and } brackets",
+      "Delete"
+    ],
+    "da[": [
+      "Searching left, select around [ and ] brackets",
+      "Delete"
+    ],
+    "da<": [
+      "Searching left, select around < and > brackets",
+      "Delete"
+    ],
+    "da)": [
+      "Searching right, select around ( and ) brackets",
+      "Delete"
+    ],
+    "da}": [
+      "Searching right, select around { and } brackets",
+      "Delete"
+    ],
+    "da]": [
+      "Searching right, select around [ and ] brackets",
+      "Delete"
+    ],
+    "da>": [
+      "Searching right, select around < and > brackets",
+      "Delete"
+    ],
+    "dat": [
+      "Select around the XML tag under the cursor",
+      "Delete"
+    ],
+    "diw": [
+      "Move the cursor to the start of the previous word",
+      "Select to the end of the next word",
+      "Delete"
+    ],
+    "dib": [
+      "Select around the nearest bracket pair",
+      "Shrink the selections by one character in each direction",
+      "Delete"
+    ],
+    "di\"": [
+      "Searching right, select between double quotes",
+      "Delete"
+    ],
+    "di'": [
+      "Searching right, select between single quotes",
+      "Delete"
+    ],
+    "di`": [
+      "Searching right, select between backticks",
+      "Delete"
+    ],
+    "di(": [
+      "Searching left, select between ( and ) brackets",
+      "Delete"
+    ],
+    "di{": [
+      "Searching left, select between { and } brackets",
+      "Delete"
+    ],
+    "di[": [
+      "Searching left, select between [ and ] brackets",
+      "Delete"
+    ],
+    "di<": [
+      "Searching left, select between < and > brackets",
+      "Delete"
+    ],
+    "di)": [
+      "Searching right, select between ( and ) brackets",
+      "Delete"
+    ],
+    "di}": [
+      "Searching right, select between { and } brackets",
+      "Delete"
+    ],
+    "di]": [
+      "Searching right, select between [ and ] brackets",
+      "Delete"
+    ],
+    "di>": [
+      "Searching right, select between < and > brackets",
+      "Delete"
+    ],
+    "dit": [
+      "Select inside the XML tag under the cursor",
+      "Delete"
+    ],
+    "cL": [
+      "Select to the end of the line",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "c$": [
+      "Select to the end of the line",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cH": [
+      "Select to the start of the line",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "c^": [
+      "Select to the start of the line",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cs": [
+      "Select the symbol under the cursor",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cc": [
+      "Move the cursor to the start of the line",
+      "Select to the end of the line",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cf": [
+      "Wait for a character to be typed, then search right for it and select to it",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cF": [
+      "Wait for a character to be typed, then search left for it and select to it",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cw": [
+      "Delete the word to the right of the cursor",
+      "Enter insert mode"
+    ],
+    "cb": [
+      "Select to the start of the previous word",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ce": [
+      "Select to the end of the next word",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cge": [
+      "Select to the end of the previous word",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "caw": [
+      "Move the cursor to the end of the previous word",
+      "Select to the end of the next word",
+      "Select to the start of the next word",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cab": [
+      "Select around the nearest bracket pair",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca\"": [
+      "Searching right, select around double quotes",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca'": [
+      "Searching right, select around single quotes",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca`": [
+      "Searching right, select around backticks",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca(": [
+      "Searching left, select around ( and ) brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca{": [
+      "Searching left, select around { and } brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca[": [
+      "Searching left, select around [ and ] brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca<": [
+      "Searching left, select around < and > brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca)": [
+      "Searching right, select around ( and ) brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca}": [
+      "Searching right, select around { and } brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca]": [
+      "Searching right, select around [ and ] brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ca>": [
+      "Searching right, select around < and > brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cat": [
+      "Select around the XML tag under the cursor",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ciw": [
+      "Move the cursor to the start of the previous word",
+      "Select to the end of the next word",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cib": [
+      "Select around the nearest bracket pair",
+      "Shrink the selections by one character in each direction",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci\"": [
+      "Searching right, select between double quotes",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci'": [
+      "Searching right, select between single quotes",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci`": [
+      "Searching right, select between backticks",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci(": [
+      "Searching left, select between ( and ) brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci{": [
+      "Searching left, select between { and } brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci[": [
+      "Searching left, select between [ and ] brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci<": [
+      "Searching left, select between < and > brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci)": [
+      "Searching right, select between ( and ) brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci}": [
+      "Searching right, select between { and } brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci]": [
+      "Searching right, select between [ and ] brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "ci>": [
+      "Searching right, select between < and > brackets",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "cit": [
+      "Select inside the XML tag under the cursor",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "dB": [
+      "Remove the nearest brackets around the cursor"
+    ]
+  },
+  "visual": {
+    ".": [
+      "Repeat the previous chord"
+    ],
+    "n": [
+      "Enter normal mode"
+    ],
+    "v": [
+      "Expand the selection to the full line, or selection the line below"
+    ],
+    "h": [
+      "Select to the left"
+    ],
+    "j": [
+      "Select down"
+    ],
+    "k": [
+      "Select up"
+    ],
+    "l": [
+      "Select to the right"
+    ],
+    "H": [
+      "Select to the start of the line"
+    ],
+    "J": [
+      "Select to the paragraph below"
+    ],
+    "L": [
+      "Select to the end of the line"
+    ],
+    "K": [
+      "Select to the paragraph above"
+    ],
+    "gg": [
+      "Select to the first line of the document"
+    ],
+    "G": [
+      "Select to the last line of the document"
+    ],
+    "^": [
+      "Select to the start of the line"
+    ],
+    "$": [
+      "Select to the end of the line"
+    ],
+    "w": [
+      "Select to the start of the next word"
+    ],
+    "e": [
+      "Select to the end of the next word"
+    ],
+    "b": [
+      "Select to the start of the previous word"
+    ],
+    "ge": [
+      "Select to the end of the previous word"
+    ],
+    "f": [
+      "Wait for a character to be typed, then search right for it and select to it"
+    ],
+    "F": [
+      "Wait for a character to be typed, then search left for it and select to it"
+    ],
+    ">": [
+      "Insert a cursor below the current one"
+    ],
+    "<": [
+      "Insert a cursor above the current one"
+    ],
+    "m": [
+      "Add the next occurrence of the current selection to the selections"
+    ],
+    "M": [
+      "Add the previous occurrence of the current selection to the selections"
+    ],
+    "u": [
+      "Undo the last action"
+    ],
+    "U": [
+      "Redo the last undone action"
+    ],
+    "p": [
+      "Paste from clipboard",
+      "Enter normal mode"
+    ],
+    "y": [
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Enter normal mode"
+    ],
+    "x": [
+      "Cut to clipboard",
+      "Enter normal mode"
+    ],
+    "<backspace>": [
+      "Delete",
+      "Enter insert mode"
+    ],
+    "c": [
+      "Delete",
+      "Enter insert mode"
+    ],
+    "d": [
+      "Delete"
+    ],
+    "D": [
+      "Delete right"
+    ],
+    "s": [
+      "Select the symbol under the cursor"
+    ],
+    "gs": [
+      "Expand selection using VS Code smart select"
+    ],
+    "gS": [
+      "Shrink selection using VS Code smart select"
+    ],
+    "aw": [
+      "Move the cursor to the end of the previous word",
+      "Select to the end of the next word",
+      "Select to the start of the next word"
+    ],
+    "ab": [
+      "Select around the nearest bracket pair"
+    ],
+    "a\"": [
+      "Searching right, select around double quotes"
+    ],
+    "a'": [
+      "Searching right, select around single quotes"
+    ],
+    "a`": [
+      "Searching right, select around backticks"
+    ],
+    "a(": [
+      "Searching left, select around ( and ) brackets"
+    ],
+    "a{": [
+      "Searching left, select around { and } brackets"
+    ],
+    "a[": [
+      "Searching left, select around [ and ] brackets"
+    ],
+    "a<": [
+      "Searching left, select around < and > brackets"
+    ],
+    "a)": [
+      "Searching right, select around ( and ) brackets"
+    ],
+    "a}": [
+      "Searching right, select around { and } brackets"
+    ],
+    "a]": [
+      "Searching right, select around [ and ] brackets"
+    ],
+    "a>": [
+      "Searching right, select around < and > brackets"
+    ],
+    "at": [
+      "Select around the XML tag under the cursor"
+    ],
+    "iw": [
+      "Move the cursor to the start of the previous word",
+      "Select to the end of the next word"
+    ],
+    "ib": [
+      "Select around the nearest bracket pair",
+      "Shrink the selections by one character in each direction"
+    ],
+    "i\"": [
+      "Searching right, select between double quotes"
+    ],
+    "i'": [
+      "Searching right, select between single quotes"
+    ],
+    "i`": [
+      "Searching right, select between backticks"
+    ],
+    "i(": [
+      "Searching left, select between ( and ) brackets"
+    ],
+    "i{": [
+      "Searching left, select between { and } brackets"
+    ],
+    "i[": [
+      "Searching left, select between [ and ] brackets"
+    ],
+    "i<": [
+      "Searching left, select between < and > brackets"
+    ],
+    "i)": [
+      "Searching right, select between ( and ) brackets"
+    ],
+    "i}": [
+      "Searching right, select between { and } brackets"
+    ],
+    "i]": [
+      "Searching right, select between [ and ] brackets"
+    ],
+    "i>": [
+      "Searching right, select between < and > brackets"
+    ],
+    "it": [
+      "Select inside the XML tag under the cursor"
+    ]
+  },
+  "leader": {
+    "i": [
+      "Enter insert mode"
+    ],
+    "k": [
+      "Show the hover tooltip"
+    ],
+    "h": [
+      "Focus the left editor group"
+    ],
+    "l": [
+      "Focus the right editor group"
+    ],
+    "L": [
+      "Move the current editor to the next group"
+    ],
+    "H": [
+      "Move the current editor to the previous group"
+    ],
+    "n": [
+      "Move the focus to the next tab"
+    ],
+    "b": [
+      "Move the focus to the previous tab"
+    ],
+    "gl": [
+      "Open line number search"
+    ],
+    "gd": [
+      "Reveal the definition of the symbol under the cursor"
+    ],
+    "gr": [
+      "Open references for the symbol under the cursor"
+    ],
+    "gs": [
+      "Open document symbol search"
+    ],
+    "pd": [
+      "Peek at the definition of the symbol under the cursor"
+    ],
+    "<enter>": [
+      "Toggle the focus between the editor and the peek widget"
+    ],
+    "r": [
+      "Rename the symbol under the cursor"
+    ],
+    "tcu": [
+      "Transform the selection to uppercase"
+    ],
+    "tcl": [
+      "Transform the selection to lowercase"
+    ],
+    "tck": [
+      "Transform the selection to kebab-case"
+    ],
+    "tcc": [
+      "Transform the selection to camelCase"
+    ],
+    "tcs": [
+      "Transform the selection to snake_case"
+    ],
+    "tcp": [
+      "Transform the selection to PascalCase"
+    ],
+    "tct": [
+      "Transform the selection to Title Case"
+    ],
+    "m": [
+      "Evaluate the math expression under the cursor"
+    ]
+  },
+  "insert": {}
+}

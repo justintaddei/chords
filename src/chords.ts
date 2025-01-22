@@ -457,7 +457,7 @@ const normal = {
 	"da]": [{ cmd: "chords.selectAroundRight", args: ["[", "]"] }, "deleteLeft"],
 	"da>": [{ cmd: "chords.selectAroundRight", args: ["<", ">"] }, "deleteLeft"],
 	dat: ["chords.selectAroundXMLTag", "deleteLeft"],
-	diw: "deleteInsideWord",
+	diw: ["cursorWordStartLeft", "cursorWordEndRightSelect", "deleteLeft"],
 	dib: [
 		"editor.action.selectToBracket",
 		"chords.shrinkSelections",
@@ -552,7 +552,12 @@ const normal = {
 		"chords.setInsertMode",
 	],
 	cat: ["chords.selectAroundXMLTag", "deleteLeft", "chords.setInsertMode"],
-	ciw: ["deleteInsideWord", "chords.setInsertMode"],
+	ciw: [
+		"cursorWordStartLeft",
+		"cursorWordEndRightSelect",
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
 	cib: [
 		"editor.action.selectToBracket",
 		"chords.shrinkSelections",

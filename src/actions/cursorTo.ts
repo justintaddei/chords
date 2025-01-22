@@ -7,7 +7,7 @@ export const cursorTo = (
 	string: string,
 	direction: "left" | "right",
 	select = false,
-	acceptUnderCursor = false,
+	exceptUnderCursor = false,
 ) => {
 	const matchFound = updateSelections((selection) => {
 		const match = nearestMatch(
@@ -15,7 +15,7 @@ export const cursorTo = (
 			selection.active,
 			direction,
 			select,
-			acceptUnderCursor,
+			exceptUnderCursor,
 		);
 
 		if (!match) return null;

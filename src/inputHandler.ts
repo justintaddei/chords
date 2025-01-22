@@ -26,10 +26,12 @@ export const waitingForCapture = () => get("onCapture").length > 0;
 
 export const clearCapture = (fulfilled = false) => {
 	vscode.commands.executeCommand("setContext", "chords.capture", false);
-	if (!fulfilled)
+
+	if (!fulfilled) {
 		for (const cb of get("onCapture")) {
 			cb("", true);
 		}
+	}
 
 	set("onCapture", []);
 	set("chord", []);

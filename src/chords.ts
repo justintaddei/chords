@@ -23,8 +23,10 @@ const normal = {
 	j: "cursorDown",
 	k: "cursorUp",
 	l: "cursorRight",
+	H: "cursorHome",
 	J: "chords.paragraphDown",
 	K: "chords.paragraphUp",
+	L: "cursorEnd",
 	gg: "cursorTop",
 	G: "cursorBottom",
 	"^": "cursorHome",
@@ -46,13 +48,27 @@ const normal = {
 	"-": "editor.emmet.action.decrementNumberByOne",
 	r: "chords.replaceCharUnderCursor",
 	// registers
-	u: "undo",
+	u: ["undo", "chords.restoreCursors"],
 	U: "redo",
 	p: "editor.action.clipboardPasteAction",
 	// registers -> copy
+	yL: [
+		"chords.saveSelections",
+		"cursorEndSelect",
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.restoreSelections",
+	],
 	y$: [
 		"chords.saveSelections",
 		"cursorEndSelect",
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.restoreSelections",
+	],
+	yH: [
+		"chords.saveSelections",
+		"cursorHomeSelect",
 		"editor.action.clipboardCopyAction",
 		"chords.highlightSelections",
 		"chords.restoreSelections",
@@ -201,6 +217,14 @@ const normal = {
 		"chords.highlightSelections",
 		"chords.restoreSelections",
 	],
+	yib: [
+		"chords.saveSelections",
+		"editor.action.selectToBracket",
+		"chords.shrinkSelections",
+		"editor.action.clipboardCopyAction",
+		"chords.highlightSelections",
+		"chords.restoreSelections",
+	],
 	'yi"': [
 		"chords.saveSelections",
 		{ cmd: "chords.selectInsideRight", args: ['"', '"'] },
@@ -286,7 +310,9 @@ const normal = {
 		"chords.restoreSelections",
 	],
 	// registers -> cut
+	xL: ["cursorEndSelect", "editor.action.clipboardCutAction"],
 	x$: ["cursorEndSelect", "editor.action.clipboardCutAction"],
+	xH: ["cursorHomeSelect", "editor.action.clipboardCutAction"],
 	"x^": ["cursorHomeSelect", "editor.action.clipboardCutAction"],
 	xs: ["chords.selectSymbolAtCursor", "editor.action.clipboardCutAction"],
 	xx: [
@@ -399,7 +425,10 @@ const normal = {
 	],
 	xit: ["chords.selectInsideXMLTag", "editor.action.clipboardCutAction"],
 	// deletions
+	"<backspace>": ["deleteLeft", "chords.setInsertMode"],
+	dL: ["cursorEndSelect", "deleteLeft"],
 	d$: ["cursorEndSelect", "deleteLeft"],
+	dH: ["cursorHomeSelect", "deleteLeft"],
 	"d^": ["cursorHomeSelect", "deleteLeft"],
 	ds: ["chords.selectSymbolAtCursor", "deleteLeft"],
 	dd: "editor.action.deleteLines",
@@ -446,18 +475,161 @@ const normal = {
 	"di]": [{ cmd: "chords.selectInsideRight", args: ["[", "]"] }, "deleteLeft"],
 	"di>": [{ cmd: "chords.selectInsideRight", args: ["<", ">"] }, "deleteLeft"],
 	dit: ["chords.selectInsideXMLTag", "deleteLeft"],
+	// changes
+	cL: ["cursorEndSelect", "deleteLeft", "chords.setInsertMode"],
+	c$: ["cursorEndSelect", "deleteLeft", "chords.setInsertMode"],
+	cH: ["cursorHomeSelect", "deleteLeft", "chords.setInsertMode"],
+	"c^": ["cursorHomeSelect", "deleteLeft", "chords.setInsertMode"],
+	cs: ["chords.selectSymbolAtCursor", "deleteLeft", "chords.setInsertMode"],
+	cc: ["cursorHome", "cursorEndSelect", "deleteLeft", "chords.setInsertMode"],
+	cf: ["chords.cursorToCharRightSelect", "deleteLeft", "chords.setInsertMode"],
+	cF: ["chords.cursorToCharLeftSelect", "deleteLeft", "chords.setInsertMode"],
+	cw: ["deleteWordRight", "chords.setInsertMode"],
+	cb: ["cursorWordStartLeftSelect", "deleteLeft", "chords.setInsertMode"],
+	ce: ["cursorWordEndRightSelect", "deleteLeft", "chords.setInsertMode"],
+	cge: ["cursorWordEndLeftSelect", "deleteLeft", "chords.setInsertMode"],
+	caw: [
+		"cursorWordEndLeft",
+		"cursorWordEndRightSelect",
+		"cursorWordStartRightSelect",
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	cab: ["editor.action.selectToBracket", "deleteLeft", "chords.setInsertMode"],
+	'ca"': [
+		{ cmd: "chords.selectAroundRight", args: ['"', '"'] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca'": [
+		{ cmd: "chords.selectAroundRight", args: ["'", "'"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca`": [
+		{ cmd: "chords.selectAroundRight", args: ["`", "`"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca(": [
+		{ cmd: "chords.selectAroundLeft", args: ["(", ")"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca{": [
+		{ cmd: "chords.selectAroundLeft", args: ["{", "}"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca[": [
+		{ cmd: "chords.selectAroundLeft", args: ["[", "]"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca<": [
+		{ cmd: "chords.selectAroundLeft", args: ["<", ">"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca)": [
+		{ cmd: "chords.selectAroundRight", args: ["(", ")"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca}": [
+		{ cmd: "chords.selectAroundRight", args: ["{", "}"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca]": [
+		{ cmd: "chords.selectAroundRight", args: ["[", "]"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ca>": [
+		{ cmd: "chords.selectAroundRight", args: ["<", ">"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	cat: ["chords.selectAroundXMLTag", "deleteLeft", "chords.setInsertMode"],
+	ciw: ["deleteInsideWord", "chords.setInsertMode"],
+	cib: [
+		"editor.action.selectToBracket",
+		"chords.shrinkSelections",
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	'ci"': [
+		{ cmd: "chords.selectInsideRight", args: ['"', '"'] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci'": [
+		{ cmd: "chords.selectInsideRight", args: ["'", "'"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci`": [
+		{ cmd: "chords.selectInsideRight", args: ["`", "`"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci(": [
+		{ cmd: "chords.selectInsideLeft", args: ["(", ")"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci{": [
+		{ cmd: "chords.selectInsideLeft", args: ["{", "}"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci[": [
+		{ cmd: "chords.selectInsideLeft", args: ["[", "]"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci<": [
+		{ cmd: "chords.selectInsideLeft", args: ["<", ">"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci)": [
+		{ cmd: "chords.selectInsideRight", args: ["(", ")"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci}": [
+		{ cmd: "chords.selectInsideRight", args: ["{", "}"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci]": [
+		{ cmd: "chords.selectInsideRight", args: ["[", "]"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	"ci>": [
+		{ cmd: "chords.selectInsideRight", args: ["<", ">"] },
+		"deleteLeft",
+		"chords.setInsertMode",
+	],
+	cit: ["chords.selectInsideXMLTag", "deleteLeft", "chords.setInsertMode"],
 	dB: "editor.action.removeBrackets",
 } satisfies ChordMap;
 
 const visual = {
 	".": "chords.repeatLastChord",
 	n: "chords.setNormalMode",
+	v: "expandLineSelection",
 	// basic movement
 	h: "cursorLeftSelect",
 	j: "cursorDownSelect",
 	k: "cursorUpSelect",
 	l: "cursorRightSelect",
+	H: "cursorHomeSelect",
 	J: "chords.paragraphDownSelect",
+	L: "cursorEndSelect",
 	K: "chords.paragraphUpSelect",
 	gg: "cursorTopSelect",
 	G: "cursorBottomSelect",
@@ -485,6 +657,8 @@ const visual = {
 	],
 	x: ["editor.action.clipboardCutAction", "chords.setNormalMode"],
 	// deletions
+	"<backspace>": ["deleteLeft", "chords.setInsertMode"],
+	c: ["deleteLeft", "chords.setInsertMode"],
 	d: "deleteLeft",
 	D: "deleteRight",
 	// selections
@@ -562,10 +736,11 @@ export const constructChord = (chord: string[] = get("chord")) => {
 	let count = "";
 	let motion = "";
 
-	for (const char of chord)
+	for (const char of chord) {
 		if (motion) motion += char;
 		else if (char.match(/^\d$/)) count += char;
 		else motion += char;
+	}
 
 	return [count ? Number.parseInt(count) : 1, motion] as const;
 };

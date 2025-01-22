@@ -27,30 +27,30 @@ export function findQuoteRange(
 }
 
 export function quoteRanges(quoteChar: string, s: string): SimpleRange[] {
-	let stateInQuote = false;
+	let insideQuote = false;
 	let stateStartIndex = 0;
-	let backslashCount = 0;
+	let escaped = false;
 	const ranges = [];
 
 	for (let i = 0; i < s.length; ++i) {
-		if (s[i] === quoteChar && backslashCount % 2 === 0) {
-			if (stateInQuote) {
+		if (s[i] === quoteChar && !escaped) {
+			if (insideQuote) {
 				ranges.push({
 					start: stateStartIndex,
 					end: i,
 				});
 
-				stateInQuote = false;
+				insideQuote = false;
 			} else {
-				stateInQuote = true;
+				insideQuote = true;
 				stateStartIndex = i;
 			}
 		}
 
 		if (s[i] === "\\") {
-			++backslashCount;
+			escaped = !escaped;
 		} else {
-			backslashCount = 0;
+			escaped = false;
 		}
 	}
 

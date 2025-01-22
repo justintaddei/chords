@@ -30,15 +30,13 @@ export const selectPair = async (
 
 	saveSelections();
 
-	const foundLeft = cursorTo(left, direction, false, isQuotePair(left, right));
-	if (!foundLeft) return restoreSelections();
-
-	if (isBracketPair(left, right)) {
-		await vscode.commands.executeCommand("editor.action.selectToBracket");
-	} else if (isQuotePair(left, right)) {
+	if (isQuotePair(left, right)) {
 		const updated = updateSelections((selection, editor) => {
 			const lineText = editor.document.lineAt(selection.active.line).text;
 			const ranges = quoteRanges(left, lineText);
+
+			if (!ranges.length) return null;
+
 			const result = findQuoteRange(ranges, selection.active);
 
 			if (!result) return null;
@@ -50,8 +48,20 @@ export const selectPair = async (
 		});
 		if (!updated) return restoreSelections();
 	} else {
-		const foundRight = cursorTo(right, "right", true);
-		if (!foundRight) return restoreSelections();
+		const foundLeft = cursorTo(
+			left,
+			direction,
+			false,
+			isQuotePair(left, right),
+		);
+		if (!foundLeft) return restoreSelections();
+
+		if (isBracketPair(left, right)) {
+			await vscode.commands.executeCommand("editor.action.selectToBracket");
+		} else {
+			const foundRight = cursorTo(right, "right", true);
+			if (!foundRight) return restoreSelections();
+		}
 	}
 
 	if (inside) shrinkSelections(left.length, right.length);

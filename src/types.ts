@@ -1,1 +1,1 @@
-export type Mode = "normal" | "visual" | "insert" | "leader";
+export type Mode = 'normal' | 'visual' | 'insert' | 'leader'

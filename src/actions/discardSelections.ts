@@ -1,12 +1,12 @@
-import vscode from "vscode";
-import { get, set } from "../store";
+import vscode from 'vscode'
+import { get, set } from '../store'
 
 export const discardSelections = () => {
-	if (!vscode.window.activeTextEditor) return;
+  if (!vscode.window.activeTextEditor) return
 
-	const selectionHistory = get("selectionHistory");
+  const selectionHistory = get('selectionHistory')
 
-	selectionHistory.pop();
+  selectionHistory.pop()
 
-	set("selectionHistory", selectionHistory);
-};
+  set('selectionHistory', selectionHistory)
+}

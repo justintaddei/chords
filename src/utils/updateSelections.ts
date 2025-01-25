@@ -1,31 +1,31 @@
-import vscode from "vscode";
+import vscode from 'vscode'
 
 export const updateSelections = (
-	cb: (
-		selection: vscode.Selection,
-		editor: vscode.TextEditor,
-	) => vscode.Selection | null,
+  cb: (
+    selection: vscode.Selection,
+    editor: vscode.TextEditor
+  ) => vscode.Selection | null
 ) => {
-	if (!vscode.window.activeTextEditor) return false;
+  if (!vscode.window.activeTextEditor) return false
 
-	const editor = vscode.window.activeTextEditor;
+  const editor = vscode.window.activeTextEditor
 
-	const newSelections: vscode.Selection[] = [];
+  const newSelections: vscode.Selection[] = []
 
-	let atLeastOneModified = false;
+  let atLeastOneModified = false
 
-	for (const selection of editor.selections) {
-		const modifiedSelection = cb(selection, editor);
+  for (const selection of editor.selections) {
+    const modifiedSelection = cb(selection, editor)
 
-		if (modifiedSelection) atLeastOneModified = true;
+    if (modifiedSelection) atLeastOneModified = true
 
-		newSelections.push(modifiedSelection ?? selection);
-	}
+    newSelections.push(modifiedSelection ?? selection)
+  }
 
-	if (!atLeastOneModified) return false;
+  if (!atLeastOneModified) return false
 
-	editor.selections = newSelections;
-	editor.revealRange(newSelections[0]);
+  editor.selections = newSelections
+  editor.revealRange(newSelections[0])
 
-	return true;
-};
+  return true
+}

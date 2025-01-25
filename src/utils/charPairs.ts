@@ -1,13 +1,13 @@
 export const isBracketPair = (left: string, right: string) => {
-	const pairs = {
-		"(": ")",
-		"[": "]",
-		"{": "}",
-		"<": ">",
-	};
+  const pairs = {
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '<': '>',
+  }
 
-	return left in pairs && pairs[left as keyof typeof pairs] === right;
-};
+  return left in pairs && pairs[left as keyof typeof pairs] === right
+}
 
 export const isQuotePair = (left: string, right: string) =>
-	left === right && ['"', "'", "`"].includes(left);
+  left === right && ['"', "'", '`'].includes(left)

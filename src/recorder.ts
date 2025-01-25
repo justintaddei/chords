@@ -1,45 +1,45 @@
-import vscode from "vscode";
+import vscode from 'vscode'
 import {
-	type ChordDescriptor,
-	applyCapture,
-	onInput,
-	waitingForCapture,
-} from "./inputHandler";
-import { get, set, subscribe } from "./store";
-import { showWarning } from "./ui/statusBar";
+  type ChordDescriptor,
+  applyCapture,
+  onInput,
+  waitingForCapture,
+} from './inputHandler'
+import { get, set, subscribe } from './store'
+import { showWarning } from './ui/statusBar'
 
 export const record = (update = false) => {
-	if (!get("recording")) return;
+  if (!get('recording')) return
 
-	const recordedChords = get("recordedChords");
+  const recordedChords = get('recordedChords')
 
-	if (update) recordedChords.pop();
+  if (update) recordedChords.pop()
 
-	recordedChords.push(structuredClone(get("lastChord")));
+  recordedChords.push(structuredClone(get('lastChord')))
 
-	set("recordedChords", recordedChords);
-};
+  set('recordedChords', recordedChords)
+}
 
 export const repeatChord = async (
-	chord: ChordDescriptor = get("lastChord"),
+  chord: ChordDescriptor = get('lastChord')
 ) => {
-	set("chord", []);
+  set('chord', [])
 
-	set("mode", chord.mode);
-	set("lastChord", chord);
-	set("replaying", true);
+  set('mode', chord.mode)
+  set('lastChord', chord)
+  set('replaying', true)
 
-	for (const char of chord.chord) await onInput(char);
+  for (const char of chord.chord) await onInput(char)
 
-	set("replaying", false);
-};
+  set('replaying', false)
+}
 
 export const replay = async () => {
-	if (!get("recordedChords").length) return showWarning("(nothing recorded)");
+  if (!get('recordedChords').length) return showWarning('(nothing recorded)')
 
-	for (const chord of get("recordedChords")) await repeatChord(chord);
-};
+  for (const chord of get('recordedChords')) await repeatChord(chord)
+}
 
-subscribe(["recording"], ({ recording }) => {
-	if (recording) set("recordedChords", []);
-});
+subscribe(['recording'], ({ recording }) => {
+  if (recording) set('recordedChords', [])
+})

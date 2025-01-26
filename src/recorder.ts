@@ -1,10 +1,4 @@
-import vscode from 'vscode'
-import {
-  type ChordDescriptor,
-  applyCapture,
-  onInput,
-  waitingForCapture,
-} from './inputHandler'
+import { type ChordDescriptor, onInput } from './inputHandler'
 import { get, set, subscribe } from './store'
 import { showWarning } from './ui/statusBar'
 

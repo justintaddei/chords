@@ -14,7 +14,13 @@ const initialStore = () => ({
   modeBeforeLeader: config().get('defaultMode', 'insert') as Mode,
   chordActive: false,
   chord: [] as string[],
-  onCapture: [] as ((char: string, canceled: boolean) => Promise<void>)[],
+  capturing: false,
+  capturingSingleChar: false,
+  highlightCapture: 'right' as 'right' | 'left',
+  capturedString: '',
+  onCapture: [] as ((str: string, canceled: boolean) => Promise<void>)[],
+  repeatingChord: false,
+  captureCommittedWithShift: false,
   selectionHistory: [] as (readonly vscode.Selection[])[],
   recording: false,
   replaying: false,
@@ -23,6 +29,7 @@ const initialStore = () => ({
     chord: [],
     mode: config().get('defaultMode', 'insert'),
     capture: null,
+    captureCommittedWithShift: false,
   } as ChordDescriptor,
   chords: {
     normal: {

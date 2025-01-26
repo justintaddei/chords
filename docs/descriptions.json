@@ -33,6 +33,12 @@
     "F": [
       "Wait for a character to be typed, then search left for it and move the cursor to it"
     ],
+    "/": [
+      "Wait for a string to be typed, then search right for it and move the cursor to it"
+    ],
+    "\\": [
+      "Wait for a string to be typed, then search left for it and move the cursor to it"
+    ],
     ">": ["Insert a cursor below the current one"],
     "<": ["Insert a cursor above the current one"],
     "m": [
@@ -107,6 +113,20 @@
     "yF": [
       "Save the current selections to the stack",
       "Wait for a character to be typed, then search left for it and select to it",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "y/": [
+      "Save the current selections to the stack",
+      "Wait for a string to be typed, then search right for it and select to it",
+      "Copy to clipboard",
+      "Temporarily highlight the active selections",
+      "Pop the last selections from the stack and restore them"
+    ],
+    "y\\": [
+      "Save the current selections to the stack",
+      "Wait for a string to be typed, then search left for it and select to it",
       "Copy to clipboard",
       "Temporarily highlight the active selections",
       "Pop the last selections from the stack and restore them"
@@ -329,6 +349,14 @@
       "Wait for a character to be typed, then search left for it and select to it",
       "Cut to clipboard"
     ],
+    "x/": [
+      "Wait for a string to be typed, then search right for it and select to it",
+      "Cut to clipboard"
+    ],
+    "x\\": [
+      "Wait for a string to be typed, then search left for it and select to it",
+      "Cut to clipboard"
+    ],
     "xaw": [
       "Move the cursor to the end of the previous word",
       "Select to the end of the next word",
@@ -437,6 +465,14 @@
       "Wait for a character to be typed, then search left for it and select to it",
       "Delete"
     ],
+    "d/": [
+      "Wait for a string to be typed, then search right for it and select to it",
+      "Delete"
+    ],
+    "d\\": [
+      "Wait for a string to be typed, then search left for it and select to it",
+      "Delete"
+    ],
     "dw": ["Delete the word to the right of the cursor"],
     "db": ["Select to the start of the previous word", "Delete"],
     "de": ["Select to the end of the next word", "Delete"],
@@ -500,6 +536,16 @@
     ],
     "cF": [
       "Wait for a character to be typed, then search left for it and select to it",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "c/": [
+      "Wait for a string to be typed, then search right for it and select to it",
+      "Delete",
+      "Enter insert mode"
+    ],
+    "c\\": [
+      "Wait for a string to be typed, then search left for it and select to it",
       "Delete",
       "Enter insert mode"
     ],
@@ -686,6 +732,12 @@
     ],
     "F": [
       "Wait for a character to be typed, then search left for it and select to it"
+    ],
+    "/": [
+      "Wait for a string to be typed, then search right for it and select to it"
+    ],
+    "\\": [
+      "Wait for a string to be typed, then search left for it and select to it"
     ],
     ">": ["Insert a cursor below the current one"],
     "<": ["Insert a cursor above the current one"],

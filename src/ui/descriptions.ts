@@ -40,6 +40,14 @@ export const descriptions: Descriptions = {
     'Wait for a character to be typed, then search right for it and select to it',
   'chords.cursorToCharLeftSelect':
     'Wait for a character to be typed, then search left for it and select to it',
+  'chords.cursorToMatchRight':
+    'Wait for a string to be typed, then search right for it and move the cursor to it',
+  'chords.cursorToMatchLeft':
+    'Wait for a string to be typed, then search left for it and move the cursor to it',
+  'chords.cursorToMatchRightSelect':
+    'Wait for a string to be typed, then search right for it and select to it',
+  'chords.cursorToMatchLeftSelect':
+    'Wait for a string to be typed, then search left for it and select to it',
   'editor.action.insertCursorBelow': 'Insert a cursor below the current one',
   'editor.action.insertCursorAbove': 'Insert a cursor above the current one',
   'editor.action.addSelectionToNextFindMatch':

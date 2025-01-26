@@ -29,6 +29,12 @@
         "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
       },
       {
+        "key": "shift+enter",
+        "command": "chords.input",
+        "args": "<shift+enter>",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
+      },
+      {
         "key": "space",
         "command": "chords.input",
         "args": "<space>",

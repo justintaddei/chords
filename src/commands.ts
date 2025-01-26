@@ -8,12 +8,11 @@ import { selectPair } from './actions/selectPair'
 import { selectSymbolAtCursor } from './actions/selectSymbolAtCursor'
 import { selectXMLTag } from './actions/selectXMLTag'
 import { shrinkSelections } from './actions/shrinkSelection'
-import { config } from './config'
 import { awaitCapture, clearCapture } from './inputHandler'
 import { repeatChord, replay } from './recorder'
 import { get, set } from './store'
 import { killCapsLockRemapper } from './utils/capsLockRemapper'
-import { highlightSelections } from './utils/highlightSelections'
+import { highlightSelections } from './utils/highlight'
 import { registerCmd } from './utils/registerCmd'
 
 // todo: args validation for all commands. Using zod?
@@ -48,28 +47,93 @@ registerCmd('chords.restoreCursors', () => {
 })
 
 registerCmd('chords.cursorToCharRight', () =>
-  awaitCapture((char) => {
-    cursorTo(char, 'right')
+  awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'right',
+    })
   })
 )
 
 registerCmd('chords.cursorToCharLeft', () =>
-  awaitCapture((char) => {
-    cursorTo(char, 'left')
+  awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'left',
+    })
   })
 )
 
 registerCmd('chords.cursorToCharRightSelect', () =>
-  awaitCapture((char) => {
-    cursorTo(char, 'right', true)
+  awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'right',
+      select: true,
+    })
   })
 )
 
 registerCmd('chords.cursorToCharLeftSelect', () =>
-  awaitCapture((char) => {
-    cursorTo(char, 'left', true)
+  awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'left',
+      select: true,
+      inclusive: false,
+    })
   })
 )
+
+registerCmd('chords.cursorToMatchRight', () => {
+  set('highlightCapture', 'right')
+  return awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'right',
+      inclusive: false,
+      endOfMatch: get('captureCommittedWithShift'),
+    })
+  }, false)
+})
+
+registerCmd('chords.cursorToMatchLeft', () => {
+  set('highlightCapture', 'left')
+  return awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'left',
+      inclusive: false,
+      endOfMatch: get('captureCommittedWithShift'),
+    })
+  }, false)
+})
+
+registerCmd('chords.cursorToMatchRightSelect', () => {
+  set('highlightCapture', 'right')
+  return awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'right',
+      select: true,
+      inclusive: false,
+      endOfMatch: get('captureCommittedWithShift'),
+    })
+  }, false)
+})
+
+registerCmd('chords.cursorToMatchLeftSelect', () => {
+  set('highlightCapture', 'left')
+  return awaitCapture((text) => {
+    cursorTo({
+      text,
+      direction: 'left',
+      select: true,
+      inclusive: false,
+      endOfMatch: get('captureCommittedWithShift'),
+    })
+  }, false)
+})
 
 registerCmd('chords.selectAroundLeft', (...ends: [string, string]) =>
   selectPair(ends, 'left')
@@ -107,6 +171,7 @@ registerCmd('chords.replaceCharUnderCursor', () =>
   awaitCapture(async (char) => {
     await vscode.commands.executeCommand('deleteRight')
     await vscode.commands.executeCommand('default:type', { text: char })
+    await vscode.commands.executeCommand('cursorLeft')
   })
 )
 

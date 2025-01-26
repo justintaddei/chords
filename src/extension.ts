@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
 import './commands'
-import './ui/editorStyles'
 import { onInput } from './inputHandler'
-import { destroy, get, set, subscribe } from './store'
+import { destroy, set, subscribe } from './store'
+import './ui/editorStyles'
 import { initCapsLockRemapper } from './utils/capsLockRemapper'
 
 let typeHandler: vscode.Disposable | undefined = undefined

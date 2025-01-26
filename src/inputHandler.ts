@@ -7,12 +7,14 @@ import { get, set, subscribe } from './store'
 import type { Mode } from './types'
 import { setMessage, showWarning } from './ui/statusBar'
 import { constructChord, getChord, isValid } from './utils/chords'
+import { highlightMatch } from './utils/highlight'
 import { disposable } from './utils/vscodeSubscriptionManager'
 
 export type ChordDescriptor = {
   chord: string[]
   mode: Mode
   capture: null | string
+  captureCommittedWithShift: boolean
 }
 
 const saveLastChord = () => {
@@ -20,44 +22,67 @@ const saveLastChord = () => {
     chord: get('chord'),
     mode: get('mode'),
     capture: get('lastChord').capture,
+    captureCommittedWithShift: get('lastChord').captureCommittedWithShift,
   })
 }
 
-export const waitingForCapture = () => get('onCapture').length > 0
+let clearHighlights: null | (() => void) = null
 
 export const clearCapture = (fulfilled = false) => {
   vscode.commands.executeCommand('setContext', 'chords.capture', false)
+
+  set('capturing', false)
+  set('onCapture', [])
+  set('chord', [])
+
+  if (clearHighlights) {
+    clearHighlights()
+    clearHighlights = null
+  }
 
   if (!fulfilled) {
     for (const cb of get('onCapture')) {
       cb('', true)
     }
   }
-
-  set('onCapture', [])
-  set('chord', [])
 }
 
-export const applyCapture = (char: string) => {
+export const applyCapture = (str: string) => {
   set('lastChord', {
     chord: get('lastChord').chord,
     mode: get('lastChord').mode,
-    capture: char,
+    capture: str,
+    captureCommittedWithShift: get('captureCommittedWithShift'),
   })
 
   for (const cb of get('onCapture')) {
-    cb(char, false)
+    cb(str, false)
   }
 
   record(true)
   clearCapture(true)
 }
 
-export const awaitCapture = (cb: (char: string) => void) => {
-  if (get('replaying')) {
+export const awaitCapture = (
+  cb: (char: string) => void | Promise<void>,
+  singleChar = true
+) => {
+  if (get('replaying') || get('repeatingChord')) {
     const lastCapture = get('lastChord').capture
-    if (lastCapture) return Promise.resolve(cb(lastCapture))
+    if (lastCapture) {
+      set(
+        'captureCommittedWithShift',
+        get('lastChord').captureCommittedWithShift
+      )
+      return Promise.resolve(cb(lastCapture))
+    }
   }
+
+  set('capturing', true)
+  set('capturingSingleChar', singleChar)
+  set('capturedString', '')
+
+  setMessage('(waiting for input)')
 
   return new Promise<void>((resolve, reject) => {
     set(
@@ -68,12 +93,54 @@ export const awaitCapture = (cb: (char: string) => void) => {
         resolve()
       })
     )
-    setMessage('(waiting for input)')
+
     vscode.commands.executeCommand('setContext', 'chords.capture', true)
   })
 }
 
+const handleCapture = (char: string) => {
+  if (char === '<enter>') {
+    if (get('capturedString').length === 0) return clearCapture(true)
+
+    set('captureCommittedWithShift', false)
+    return applyCapture(get('capturedString'))
+  }
+  if (char === '<shift+enter>') {
+    if (get('capturedString').length === 0) return clearCapture(true)
+
+    set('captureCommittedWithShift', true)
+    return applyCapture(get('capturedString'))
+  }
+
+  if (get('capturingSingleChar')) {
+    return applyCapture(char === '<space>' ? ' ' : char)
+  }
+
+  if (char === '<backspace>') {
+    if (get('capturedString').length === 0) return
+    set('capturedString', get('capturedString').slice(0, -1))
+  } else if (char === '<space>') {
+    set('capturedString', get('capturedString') + ' ')
+  } else {
+    set('capturedString', get('capturedString') + char)
+  }
+
+  if (clearHighlights) {
+    clearHighlights()
+    clearHighlights = null
+  }
+
+  clearHighlights = highlightMatch(
+    get('capturedString'),
+    get('highlightCapture')
+  )
+
+  return setMessage(`[${get('capturedString')}]`)
+}
+
 export const onInput = async (char: string) => {
+  if (get('capturing')) return handleCapture(char)
+
   if (char === config().get('leader')) {
     set('modeBeforeLeader', get('mode'))
     set('mode', 'leader')
@@ -81,11 +148,6 @@ export const onInput = async (char: string) => {
   }
 
   set('chord', get('chord').concat(char))
-
-  if (waitingForCapture()) {
-    applyCapture(char)
-    return
-  }
 
   if (!isValid()) {
     console.log(
@@ -104,8 +166,9 @@ export const onInput = async (char: string) => {
       // the mode can be updated by commands (e.g. "2i"),
       // so we need to check this on each iteration.
       if (get('mode') === 'insert') {
-        showWarning('(insert cannot be repeated)')
-        return
+        set('repeatingChord', false)
+        set('chordActive', false)
+        return showWarning('(insert cannot be repeated)')
       }
 
       const command = getChord(motion)
@@ -130,7 +193,10 @@ export const onInput = async (char: string) => {
         if (command !== 'chords.toggleRecording') record()
       }
       await execCord(command)
+
+      set('repeatingChord', true)
     }
+    set('repeatingChord', false)
     set('chordActive', false)
   }
 }

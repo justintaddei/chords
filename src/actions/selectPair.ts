@@ -35,13 +35,22 @@ export const selectPair = async (
     })
     if (!updated) return restoreSelections()
   } else {
-    const foundLeft = cursorTo(left, direction, false, isQuotePair(left, right))
+    const foundLeft = cursorTo({
+      text: left,
+      direction,
+      select: true,
+      acceptUnderCursor: isQuotePair(left, right),
+    })
     if (!foundLeft) return restoreSelections()
 
     if (isBracketPair(left, right)) {
       await vscode.commands.executeCommand('editor.action.selectToBracket')
     } else {
-      const foundRight = cursorTo(right, 'right', true)
+      const foundRight = cursorTo({
+        text: right,
+        direction: 'right',
+        select: true,
+      })
       if (!foundRight) return restoreSelections()
     }
   }

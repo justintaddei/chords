@@ -38,8 +38,6 @@ export const selectPair = async (
     const foundLeft = cursorTo({
       text: left,
       direction,
-      select: true,
-      acceptUnderCursor: isQuotePair(left, right),
     })
     if (!foundLeft) return restoreSelections()
 

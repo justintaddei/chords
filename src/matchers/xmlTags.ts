@@ -113,6 +113,12 @@ function matchTags(partialTags: PartialTag[]): OffsetTag[] {
   return tags.sort((a, b) => a.opening.start - b.opening.start)
 }
 
+/**
+ * todo: generates incorrect ranges in jsx when an attribute has an arrow function.
+ * @example ```jsx
+ * <button onClick={() => console.log('clicked')}>Click me</button>
+ * ```
+ */
 function getPartialTags(text: string): PartialTag[] {
   const regex = /\<(\/)?([^\>\<\s]+)[^\>\<]*?(\/?)\>/g
   const tagRanges: PartialTag[] = []

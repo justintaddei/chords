@@ -182,4 +182,6 @@ export const descriptions: Descriptions = {
     'Evaluate the math expression under the cursor',
   'editor.action.peekDefinition':
     'Peek at the definition of the symbol under the cursor',
+  'editor.action.marker.next': 'Go to next problem',
+  'editor.action.marker.prev': 'Go to previous problem',
 }

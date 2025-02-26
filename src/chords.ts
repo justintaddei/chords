@@ -746,6 +746,8 @@ const leader = {
   gd: 'editor.action.revealDefinition',
   gr: 'editor.action.goToReferences',
   gs: 'workbench.action.gotoSymbol',
+  gp: 'editor.action.marker.next',
+  gP: 'editor.action.marker.prev',
   pd: 'editor.action.peekDefinition',
   '<enter>': 'togglePeekWidgetFocus',
   r: 'editor.action.rename',

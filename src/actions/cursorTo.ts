@@ -4,13 +4,20 @@ import { showWarning } from '../ui/statusBar'
 import { updateSelections } from '../utils/updateSelections'
 
 type Options = {
-  text: string
   direction: 'left' | 'right'
   select?: boolean
   inclusive?: boolean
   acceptUnderCursor?: boolean
-  endOfMatch?: boolean
-}
+} & (
+  | {
+      text: string
+      endOfMatch?: boolean
+    }
+  | {
+      text: RegExp
+      endOfMatch?: false
+    }
+)
 
 export const cursorTo = ({
   text,
@@ -31,9 +38,10 @@ export const cursorTo = ({
 
     if (!match) return null
 
-    const updatedSelection = endOfMatch
-      ? match.with({ character: match.character + text.length })
-      : match
+    const updatedSelection =
+      endOfMatch && !(text instanceof RegExp)
+        ? match.with({ character: match.character + text.length })
+        : match
 
     return select
       ? new vscode.Selection(selection.anchor, updatedSelection)

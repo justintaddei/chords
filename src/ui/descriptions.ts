@@ -18,10 +18,28 @@ export const descriptions: Descriptions = {
   cursorEnd: 'Move the cursor to the end of the line',
   cursorTop: 'Move the cursor to the first line of the document',
   cursorBottom: 'Move the cursor to the last line of the document',
-  cursorWordStartRight: 'Move the cursor to the start of the next word',
-  cursorWordEndRight: 'Move the cursor to the end of the next word',
-  cursorWordStartLeft: 'Move the cursor to the start of the previous word',
-  cursorWordEndLeft: 'Move the cursor to the end of the previous word',
+  cursorWordStartRight:
+    '(VS Code built-in) Move the cursor to the start of the next word',
+  cursorWordEndRight:
+    '(VS Code built-in) Move the cursor to the end of the next word',
+  cursorWordStartLeft:
+    '(VS Code built-in) Move the cursor to the start of the previous word',
+  cursorWordEndLeft:
+    '(VS Code built-in) Move the cursor to the end of the previous word',
+  'chords.cursorToWordStartRight':
+    'Move the cursor to the start of the next word',
+  'chords.cursorToWordEndRight': 'Move the cursor to the end of the next word',
+  'chords.cursorToWordStartRightSelect': 'Select to the start of the next word',
+  'chords.cursorToWordEndRightSelect': 'Select to the end of the next word',
+  'chords.cursorToWordStartLeft':
+    'Move the cursor to the start of the previous word',
+  'chords.cursorToWordEndLeft':
+    'Move the cursor to the end of the previous word',
+  'chords.cursorToWordStartLeftSelect':
+    'Select to the start of the previous word',
+  'chords.cursorToWordEndLeftSelect': 'Select to the end of the previous word',
+  'chords.selectAroundWord': 'Select around the word under the cursor',
+  'chords.selectInsideWord': 'Select inside the word under the cursor',
   deleteLeft: 'Delete',
   deleteRight: 'Delete right',
   'editor.action.deleteLines': 'Delete the line under the cursor',
@@ -77,10 +95,14 @@ export const descriptions: Descriptions = {
   'chords.paragraphDownSelect': 'Select to the paragraph below',
   cursorEndSelect: 'Select to the end of the line',
   cursorHomeSelect: 'Select to the start of the line',
-  cursorWordStartRightSelect: 'Select to the start of the next word',
-  cursorWordEndRightSelect: 'Select to the end of the next word',
-  cursorWordStartLeftSelect: 'Select to the start of the previous word',
-  cursorWordEndLeftSelect: 'Select to the end of the previous word',
+  cursorWordStartRightSelect:
+    '(VS Code built-in) Select to the start of the next word',
+  cursorWordEndRightSelect:
+    '(VS Code built-in) Select to the end of the next word',
+  cursorWordStartLeftSelect:
+    '(VS Code built-in) Select to the start of the previous word',
+  cursorWordEndLeftSelect:
+    '(VS Code built-in) Select to the end of the previous word',
   cursorTopSelect: 'Select to the first line of the document',
   cursorBottomSelect: 'Select to the last line of the document',
   cursorLineStart: 'Move the cursor to the start of the line',

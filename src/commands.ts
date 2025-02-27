@@ -2,10 +2,21 @@ import vscode from 'vscode'
 import { collapseSelections } from './actions/collapseSelections'
 import { cursorTo } from './actions/cursorTo'
 import { cursorToParagraph } from './actions/cursorToParagraph'
+import {
+  endOfWordLeft,
+  endOfWordLeftSelect,
+  endOfWordRight,
+  endOfWordRightSelect,
+  startOfWordLeft,
+  startOfWordLeftSelect,
+  startOfWordRight,
+  startOfWordRightSelect,
+} from './actions/cursorToWordEdges'
 import { restoreSelections } from './actions/restoreSelections'
 import { saveSelections } from './actions/saveSelections'
 import { selectPair } from './actions/selectPair'
 import { selectSymbolAtCursor } from './actions/selectSymbolAtCursor'
+import { selectAroundWord, selectInsideWord } from './actions/selectWord'
 import { selectXMLTag } from './actions/selectXMLTag'
 import { shrinkSelections } from './actions/shrinkSelection'
 import { awaitCapture, clearCapture } from './inputHandler'
@@ -45,6 +56,18 @@ registerCmd('chords.restoreCursors', () => {
   restoreSelections()
   collapseSelections('anchor')
 })
+
+registerCmd('chords.cursorToWordStartRight', startOfWordRight)
+registerCmd('chords.cursorToWordEndRight', endOfWordRight)
+registerCmd('chords.cursorToWordStartRightSelect', startOfWordRightSelect)
+registerCmd('chords.cursorToWordEndRightSelect', endOfWordRightSelect)
+registerCmd('chords.cursorToWordStartLeft', startOfWordLeft)
+registerCmd('chords.cursorToWordEndLeft', endOfWordLeft)
+registerCmd('chords.cursorToWordStartLeftSelect', startOfWordLeftSelect)
+registerCmd('chords.cursorToWordEndLeftSelect', endOfWordLeftSelect)
+
+registerCmd('chords.selectAroundWord', selectAroundWord)
+registerCmd('chords.selectInsideWord', selectInsideWord)
 
 registerCmd('chords.cursorToCharRight', () =>
   awaitCapture((text) => {

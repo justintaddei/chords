@@ -133,9 +133,7 @@
     ],
     "yaw": [
       "Save the current selections to the stack",
-      "Move the cursor to the end of the previous word",
-      "Select to the end of the next word",
-      "Select to the start of the next word",
+      "Select around the word under the cursor",
       "Copy to clipboard",
       "Temporarily highlight the active selections",
       "Pop the last selections from the stack and restore them"
@@ -233,8 +231,7 @@
     ],
     "yiw": [
       "Save the current selections to the stack",
-      "Move the cursor to the start of the previous word",
-      "Select to the end of the next word",
+      "Select inside the word under the cursor",
       "Copy to clipboard",
       "Temporarily highlight the active selections",
       "Pop the last selections from the stack and restore them"
@@ -357,12 +354,7 @@
       "Wait for a string to be typed, then search left for it and select to it",
       "Cut to clipboard"
     ],
-    "xaw": [
-      "Move the cursor to the end of the previous word",
-      "Select to the end of the next word",
-      "Select to the start of the next word",
-      "Cut to clipboard"
-    ],
+    "xaw": ["Select around the word under the cursor", "Cut to clipboard"],
     "xab": ["Select around the nearest bracket pair", "Cut to clipboard"],
     "xa\"": [
       "Searching right, select around double quotes",
@@ -403,11 +395,7 @@
       "Cut to clipboard"
     ],
     "xat": ["Select around the XML tag under the cursor", "Cut to clipboard"],
-    "xiw": [
-      "Move the cursor to the start of the previous word",
-      "Select to the end of the next word",
-      "Cut to clipboard"
-    ],
+    "xiw": ["Select inside the word under the cursor", "Cut to clipboard"],
     "xi\"": [
       "Searching right, select between double quotes",
       "Cut to clipboard"
@@ -473,16 +461,11 @@
       "Wait for a string to be typed, then search left for it and select to it",
       "Delete"
     ],
-    "dw": ["Delete the word to the right of the cursor"],
+    "dw": ["Select to the start of the next word", "Delete"],
     "db": ["Select to the start of the previous word", "Delete"],
     "de": ["Select to the end of the next word", "Delete"],
     "dge": ["Select to the end of the previous word", "Delete"],
-    "daw": [
-      "Move the cursor to the end of the previous word",
-      "Select to the end of the next word",
-      "Select to the start of the next word",
-      "Delete"
-    ],
+    "daw": ["Select around the word under the cursor", "Delete"],
     "dab": ["Select around the nearest bracket pair", "Delete"],
     "da\"": ["Searching right, select around double quotes", "Delete"],
     "da'": ["Searching right, select around single quotes", "Delete"],
@@ -496,11 +479,7 @@
     "da]": ["Searching right, select around [ and ] brackets", "Delete"],
     "da>": ["Searching right, select around < and > brackets", "Delete"],
     "dat": ["Select around the XML tag under the cursor", "Delete"],
-    "diw": [
-      "Move the cursor to the start of the previous word",
-      "Select to the end of the next word",
-      "Delete"
-    ],
+    "diw": ["Select inside the word under the cursor", "Delete"],
     "dib": [
       "Select around the nearest bracket pair",
       "Shrink the selections by one character in each direction",
@@ -549,7 +528,11 @@
       "Delete",
       "Enter insert mode"
     ],
-    "cw": ["Delete the word to the right of the cursor", "Enter insert mode"],
+    "cw": [
+      "Select to the start of the next word",
+      "Delete",
+      "Enter insert mode"
+    ],
     "cb": [
       "Select to the start of the previous word",
       "Delete",
@@ -562,9 +545,7 @@
       "Enter insert mode"
     ],
     "caw": [
-      "Move the cursor to the end of the previous word",
-      "Select to the end of the next word",
-      "Select to the start of the next word",
+      "Select around the word under the cursor",
       "Delete",
       "Enter insert mode"
     ],
@@ -634,8 +615,7 @@
       "Enter insert mode"
     ],
     "ciw": [
-      "Move the cursor to the start of the previous word",
-      "Select to the end of the next word",
+      "Select inside the word under the cursor",
       "Delete",
       "Enter insert mode"
     ],
@@ -761,11 +741,7 @@
     "s": ["Select the symbol under the cursor"],
     "gs": ["Expand selection using VS Code smart select"],
     "gS": ["Shrink selection using VS Code smart select"],
-    "aw": [
-      "Move the cursor to the end of the previous word",
-      "Select to the end of the next word",
-      "Select to the start of the next word"
-    ],
+    "aw": ["Select around the word under the cursor"],
     "ab": ["Select around the nearest bracket pair"],
     "a\"": ["Searching right, select around double quotes"],
     "a'": ["Searching right, select around single quotes"],
@@ -779,10 +755,7 @@
     "a]": ["Searching right, select around [ and ] brackets"],
     "a>": ["Searching right, select around < and > brackets"],
     "at": ["Select around the XML tag under the cursor"],
-    "iw": [
-      "Move the cursor to the start of the previous word",
-      "Select to the end of the next word"
-    ],
+    "iw": ["Select inside the word under the cursor"],
     "ib": [
       "Select around the nearest bracket pair",
       "Shrink the selections by one character in each direction"
@@ -813,6 +786,8 @@
     "gd": ["Reveal the definition of the symbol under the cursor"],
     "gr": ["Open references for the symbol under the cursor"],
     "gs": ["Open document symbol search"],
+    "gp": ["Go to next problem"],
+    "gP": ["Go to previous problem"],
     "pd": ["Peek at the definition of the symbol under the cursor"],
     "<enter>": ["Toggle the focus between the editor and the peek widget"],
     "r": ["Rename the symbol under the cursor"],

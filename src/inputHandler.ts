@@ -208,8 +208,9 @@ subscribe(['mode'], ({ mode }) => {
 })
 
 disposable(
-  vscode.window.onDidChangeTextEditorSelection(({ selections }) => {
+  vscode.window.onDidChangeTextEditorSelection(({ selections, kind }) => {
     if (get('chordActive')) return
+    if (kind === vscode.TextEditorSelectionChangeKind.Command) return
 
     const hasSelections = selections.some((s) => !s.isEmpty)
 

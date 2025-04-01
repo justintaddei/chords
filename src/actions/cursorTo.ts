@@ -1,54 +1,79 @@
 import vscode from 'vscode'
-import { nearestMatch } from '../matchers/nearestMatch'
-import { showWarning } from '../ui/statusBar'
+import {
+  columnToCharacter,
+  moveActiveWrap,
+  safeTranslate,
+  validatePosition,
+} from '../utils/selections'
 import { updateSelections } from '../utils/updateSelections'
 
-type Options = {
-  direction: 'left' | 'right'
-  select?: boolean
-  inclusive?: boolean
-  acceptUnderCursor?: boolean
-} & (
-  | {
-      text: string
-      endOfMatch?: boolean
-    }
-  | {
-      text: RegExp
-      endOfMatch?: false
-    }
-)
+export const cursorTo = (
+  predicate: (
+    doc: vscode.TextDocument,
+    offset: number,
+    selection: vscode.Selection
+  ) => vscode.Position | null,
+  { offset = 0, select = false } = {}
+) => {
+  updateSelections((selection, editor) => {
+    const doc = editor.document
 
-export const cursorTo = ({
-  text,
-  direction,
-  select = false,
-  inclusive = select,
-  acceptUnderCursor = false,
-  endOfMatch = false,
-}: Options) => {
-  const matchFound = updateSelections((selection) => {
-    const match = nearestMatch(
-      text,
-      selection.active,
-      direction,
-      inclusive,
-      acceptUnderCursor
+    let match: vscode.Position | null = null
+
+    const docOffset = Math.max(
+      0,
+      doc.offsetAt(selection.active) + offset // + nudge
     )
+
+    match = predicate(doc, docOffset, selection)
 
     if (!match) return null
 
-    const updatedSelection =
-      endOfMatch && !(text instanceof RegExp)
-        ? match.with({ character: match.character + text.length })
-        : match
-
-    return select
-      ? new vscode.Selection(selection.anchor, updatedSelection)
-      : new vscode.Selection(updatedSelection, updatedSelection)
+    return new vscode.Selection(select ? selection.anchor : match, match)
   })
+}
 
-  if (!matchFound) showWarning('(no match found)')
+export const moveCursorCharacterwise = (
+  chars: number,
+  { select = false } = {}
+) => {
+  updateSelections(
+    (selection, editor) => {
+      const updatedActive = moveActiveWrap(selection, chars, editor)
+      if (select) return updatedActive
 
-  return matchFound
+      return new vscode.Selection(updatedActive.active, updatedActive.active)
+    },
+    { discrete: true }
+  )
+}
+
+export const moveCursorLinewise = (lines: number, { select = false } = {}) => {
+  updateSelections(
+    (selection, editor, lastRecordedColumn) => {
+      const updatedActive = validatePosition(
+        safeTranslate(selection.active, lines, 0, editor),
+        editor
+      )
+
+      const updatedSelection = new vscode.Selection(
+        select ? selection.anchor : updatedActive,
+        updatedActive
+      )
+
+      const correctedActive = updatedActive.with({
+        character: columnToCharacter(
+          updatedSelection,
+          lastRecordedColumn,
+          editor
+        ),
+      })
+
+      return new vscode.Selection(
+        select ? selection.anchor : correctedActive,
+        correctedActive
+      )
+    },
+    { discrete: true, skipColumnRecording: true }
+  )
 }

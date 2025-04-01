@@ -3,9 +3,9 @@ import './commands'
 import { onInput } from './inputHandler'
 import { destroy, set, subscribe } from './store'
 import './ui/editorStyles'
-// import { initCapsLockRemapper } from './utils/capsLockRemapper'
+import { initCapsLockRemapper } from './utils/capsLockRemapper'
 
-let typeCmdHandler: vscode.Disposable | undefined = undefined
+let typeHandler: vscode.Disposable | undefined = undefined
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('[chords] activated')
@@ -18,14 +18,12 @@ export function activate(context: vscode.ExtensionContext) {
     })
   }
 
-  subscribe(['mode'], ({ mode, recording }) => {
-    if (mode === 'insert' && !recording) {
-      if (typeCmdHandler) typeCmdHandler.dispose()
-      typeCmdHandler = undefined
-      vscode.commands.executeCommand('setContext', 'chords.bypass', true)
+  subscribe(['mode'], ({ mode }) => {
+    if (mode === 'insert') {
+      if (typeHandler) typeHandler.dispose()
+      typeHandler = undefined
     } else {
-      if (!typeCmdHandler) typeCmdHandler = overrideTypeHandler()
-      vscode.commands.executeCommand('setContext', 'chords.bypass', false)
+      if (!typeHandler) typeHandler = overrideTypeHandler()
     }
   })
 
@@ -35,11 +33,11 @@ export function activate(context: vscode.ExtensionContext) {
     })
   )
 
-  // initCapsLockRemapper()
+  initCapsLockRemapper()
 }
 
 export function deactivate() {
-  if (typeCmdHandler) typeCmdHandler.dispose()
+  if (typeHandler) typeHandler.dispose()
   destroy()
 
   console.log('[chords] deactivated')

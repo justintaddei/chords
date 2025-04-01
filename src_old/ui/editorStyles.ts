@@ -1,7 +1,7 @@
 import vscode from 'vscode'
 import { config, editorConfig } from '../config'
-import { Mode, get, subscribe } from '../store'
-import { length } from '../utils/selections'
+import { get, subscribe } from '../store'
+import type { Mode } from '../types'
 import { setCursorStyle, setLineNumbers } from '../utils/vscodeStyles'
 import { disposable } from '../utils/vscodeSubscriptionManager'
 
@@ -17,15 +17,8 @@ export const updateEditorStyles = (mode: Mode) => {
   }
 
   if (mode === 'visual') {
+    setCursorStyle(config().get('visualMode.cursorStyle'))
     setLineNumbers(config().get('visualMode.lineNumbers'))
-
-    const selections = vscode.window.activeTextEditor?.selections
-
-    if (selections?.some((s) => length(s) > 1 || !s.isReversed)) {
-      setCursorStyle(config().get('visualMode.cursorStyleSelection'))
-    } else {
-      setCursorStyle(config().get('visualMode.cursorStyleEmpty'))
-    }
   }
 }
 

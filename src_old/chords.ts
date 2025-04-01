@@ -1,4 +1,4 @@
-import { Mode } from './store'
+import type { Mode } from './types'
 
 type ChordAction = string | { cmd: string; args: unknown[] }
 
@@ -11,7 +11,6 @@ const normal = {
   q: 'chords.toggleRecording',
   '@q': 'chords.replay',
   i: 'chords.setInsertMode',
-  '<space>': 'chords.setLeaderMode',
   a: ['cursorRight', 'chords.setInsertMode'],
   I: ['cursorHome', 'chords.setInsertMode'],
   A: ['cursorEnd', 'chords.setInsertMode'],
@@ -19,10 +18,10 @@ const normal = {
   O: ['editor.action.insertLineBefore', 'chords.setInsertMode'],
   v: 'chords.setVisualMode',
   // movement
-  h: 'chords.cursorLeft',
-  j: 'chords.cursorDown',
-  k: 'chords.cursorUp',
-  l: 'chords.cursorRight',
+  h: 'cursorLeft',
+  j: 'cursorDown',
+  k: 'cursorUp',
+  l: 'cursorRight',
   H: 'cursorHome',
   J: 'chords.paragraphDown',
   K: 'chords.paragraphUp',
@@ -53,29 +52,6 @@ const normal = {
   U: 'redo',
   p: 'editor.action.clipboardPasteAction',
   // registers -> copy
-  ye: [
-    'chords.saveSelections',
-    'chords.setVisualMode',
-    'chords.cursorToWordEndRightSelect',
-    'editor.action.clipboardCopyAction',
-    'chords.highlightSelections',
-    'chords.setNormalMode',
-    'chords.restoreSelections',
-  ],
-  yb: [
-    'chords.saveSelections',
-    'chords.cursorToWordStartLeftSelect',
-    'editor.action.clipboardCopyAction',
-    'chords.highlightSelections',
-    'chords.restoreSelections',
-  ],
-  yw: [
-    'chords.saveSelections',
-    'chords.cursorToWordStartRightSelect',
-    'editor.action.clipboardCopyAction',
-    'chords.highlightSelections',
-    'chords.restoreSelections',
-  ],
   yL: [
     'chords.saveSelections',
     'cursorEndSelect',
@@ -671,14 +647,13 @@ const normal = {
 
 const visual = {
   '.': 'chords.repeatLastChord',
-  '<space>': 'chords.setLeaderMode',
   n: 'chords.setNormalMode',
   v: 'expandLineSelection',
   // basic movement
-  h: 'chords.cursorLeftSelect',
-  j: 'chords.cursorDownSelect',
-  k: 'chords.cursorUpSelect',
-  l: 'chords.cursorRightSelect',
+  h: 'cursorLeftSelect',
+  j: 'cursorDownSelect',
+  k: 'cursorUpSelect',
+  l: 'cursorRightSelect',
   H: 'cursorHomeSelect',
   J: 'chords.paragraphDownSelect',
   L: 'cursorEndSelect',

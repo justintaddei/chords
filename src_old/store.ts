@@ -1,21 +1,36 @@
 import vscode from 'vscode'
-import { ChordMap, defaultChords } from './chords'
+import { type ChordMap, defaultChords } from './chords'
 import { config } from './config'
-
-export type Mode = 'normal' | 'visual' | 'insert' | 'leader'
+import type { ChordDescriptor } from './inputHandler'
+import type { Mode } from './types'
+import {
+  initCapsLockRemapper,
+  killCapsLockRemapper,
+} from './utils/capsLockRemapper'
 
 const initialStore = () => ({
-  debug: false,
   context: null as vscode.ExtensionContext | null,
   mode: config().get('defaultMode', 'insert') as Mode,
-  blockCursorCorrection: false,
-  recording: false,
-  processing: false,
+  modeBeforeLeader: config().get('defaultMode', 'insert') as Mode,
+  chordActive: false,
   chord: [] as string[],
+  capturing: false,
+  capturingSingleChar: false,
+  highlightCapture: 'right' as 'right' | 'left',
+  capturedString: '',
+  onCapture: [] as ((str: string, canceled: boolean) => Promise<void>)[],
+  repeatingChord: false,
+  captureCommittedWithShift: false,
   selectionHistory: [] as (readonly vscode.Selection[])[],
-  isMouseSelection: false,
-  recordedColumns: [] as number[],
-  selectionUpdatedByChords: false,
+  recording: false,
+  replaying: false,
+  recordedChords: [] as ChordDescriptor[],
+  lastChord: {
+    chord: [],
+    mode: config().get('defaultMode', 'insert'),
+    capture: null,
+    captureCommittedWithShift: false,
+  } as ChordDescriptor,
   chords: {
     normal: {
       ...defaultChords.normal,
@@ -31,6 +46,7 @@ const initialStore = () => ({
     },
     insert: {},
   } as Record<Mode, ChordMap>,
+  killCapsLockRemapper: null as (() => boolean) | null,
 })
 
 let store = initialStore()
@@ -76,7 +92,7 @@ export const notifyAll = () => {
 }
 
 export const destroy = () => {
-  // killCapsLockRemapper()
+  killCapsLockRemapper()
 }
 
 vscode.workspace.onDidChangeConfiguration((e) => {
@@ -89,7 +105,7 @@ vscode.workspace.onDidChangeConfiguration((e) => {
     set('context', context)
 
     notifyAll()
-    // initCapsLockRemapper()
+    initCapsLockRemapper()
 
     console.log('[chords] configuration reloaded')
   }

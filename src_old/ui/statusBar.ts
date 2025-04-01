@@ -1,6 +1,7 @@
 import vscode from 'vscode'
 import { config } from '../config'
-import { Mode, subscribe } from '../store'
+import { subscribe } from '../store'
+import type { Mode } from '../types'
 import { disposable } from '../utils/vscodeSubscriptionManager'
 
 let messageTimerId: NodeJS.Timeout | undefined = undefined

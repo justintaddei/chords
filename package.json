@@ -26,37 +26,37 @@
         "key": "enter",
         "command": "chords.input",
         "args": "<enter>",
-        "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !suggestWidgetVisible && !chords.bypass"
       },
       {
         "key": "shift+enter",
         "command": "chords.input",
         "args": "<shift+enter>",
-        "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !suggestWidgetVisible && !chords.bypass"
       },
       {
         "key": "space",
         "command": "chords.input",
         "args": "<space>",
-        "when": "editorTextFocus && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !chords.bypass"
       },
       {
         "key": "backspace",
         "command": "chords.input",
         "args": "<backspace>",
-        "when": "editorTextFocus && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !chords.bypass"
       },
       {
         "key": "delete",
         "command": "chords.input",
         "args": "<delete>",
-        "when": "editorTextFocus && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !chords.bypass"
       },
       {
         "key": "tab",
         "command": "chords.input",
         "args": "<tab>",
-        "when": "editorTextFocus && chords.mode !== 'insert'"
+        "when": "editorTextFocus && !chords.bypass"
       },
       {
         "key": "escape",
@@ -100,6 +100,10 @@
         "command": "chords.killCapsLockRemapper",
         "title": "Chords: Kill CapsLock Remapper",
         "enablement": "isWindows && chords.remappedCapsLock"
+      },
+      {
+        "command": "chords.debug",
+        "title": "Chords: Toggle verbose logging"
       }
     ],
     "configuration": {
@@ -151,7 +155,7 @@
           "default": "block",
           "description": "The cursor style to use in normal mode"
         },
-        "chords.visualMode.cursorStyle": {
+        "chords.visualMode.cursorStyleEmpty": {
           "type": "string",
           "enum": [
             "line",
@@ -162,6 +166,19 @@
             "block-outline"
           ],
           "default": "block-outline",
+          "description": "The cursor style to use in visual mode"
+        },
+        "chords.visualMode.cursorStyleSelection": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "line",
           "description": "The cursor style to use in visual mode"
         },
         "chords.selectionHighlightBackgroundColor": {

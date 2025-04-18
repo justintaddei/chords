@@ -20,10 +20,7 @@ export const cursorTo = (
 
     let match: vscode.Position | null = null
 
-    const docOffset = Math.max(
-      0,
-      doc.offsetAt(selection.active) + offset // + nudge
-    )
+    const docOffset = Math.max(0, doc.offsetAt(selection.active) + offset)
 
     match = predicate(doc, docOffset, selection)
 
@@ -44,7 +41,7 @@ export const moveCursorCharacterwise = (
 
       return new vscode.Selection(updatedActive.active, updatedActive.active)
     },
-    { discrete: true }
+    { naive: true }
   )
 }
 
@@ -74,6 +71,6 @@ export const moveCursorLinewise = (lines: number, { select = false } = {}) => {
         correctedActive
       )
     },
-    { discrete: true, skipColumnRecording: true }
+    { naive: true, skipColumnRecording: true }
   )
 }

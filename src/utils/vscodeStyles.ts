@@ -1,4 +1,5 @@
 import vscode from 'vscode'
+import { debug } from './debug'
 import { cursorStyleMap, isValidEnum, lineNumbersMap } from './vscodeEnumMaps'
 
 export const setCursorStyle = (
@@ -7,7 +8,7 @@ export const setCursorStyle = (
   if (!vscode.window.activeTextEditor) return
 
   if (!isValidEnum(value, cursorStyleMap)) {
-    console.error(
+    debug(
       '[chords] Invalid cursor style:',
       value,
       '. Valid values are:',
@@ -25,7 +26,7 @@ export const setLineNumbers = (
   if (!vscode.window.activeTextEditor) return
 
   if (!isValidEnum(value, lineNumbersMap)) {
-    console.error(
+    debug(
       '[chords] Invalid line numbers style:',
       value,
       '. Valid values are:',

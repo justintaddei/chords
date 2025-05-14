@@ -11,7 +11,8 @@ export const cursorTo = (
   predicate: (
     doc: vscode.TextDocument,
     offset: number,
-    selection: vscode.Selection
+    selection: vscode.Selection,
+    select: boolean
   ) => vscode.Position | null,
   { offset = 0, select = false } = {}
 ) => {
@@ -22,7 +23,7 @@ export const cursorTo = (
 
     const docOffset = Math.max(0, doc.offsetAt(selection.active) + offset)
 
-    match = predicate(doc, docOffset, selection)
+    match = predicate(doc, docOffset, selection, select)
 
     if (!match) return null
 

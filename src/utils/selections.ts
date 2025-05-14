@@ -134,3 +134,12 @@ export const columnToCharacter = (
     Math.min(visualCharacter - tabCount * tabSize + tabCount, line.text.length)
   )
 }
+
+export const edgePlacement = (
+  selection: vscode.Selection,
+  position: vscode.Position
+): 'left' | 'right' => {
+  const { anchor } = selection
+
+  return position.isAfter(anchor) ? 'right' : 'left'
+}

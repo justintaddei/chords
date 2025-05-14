@@ -6,6 +6,7 @@ export type Mode = 'normal' | 'visual' | 'insert' | 'leader'
 
 const initialStore = () => ({
   debug: false,
+  debugJump: false,
   context: null as vscode.ExtensionContext | null,
   mode: config().get('defaultMode', 'insert') as Mode,
   blockCursorCorrection: false,

@@ -8,10 +8,12 @@ import {
 import { highlightSelections } from './actions/highlight'
 import { restoreSelections } from './actions/restoreSelections'
 import { saveSelections } from './actions/saveSelections'
-import { selectAroundWord } from './actions/selectAroundWord'
+import { selectInsideWord } from './actions/selectInsideWord'
 import {
+  endOfStringRight,
   endOfWordLeft,
   endOfWordRight,
+  startOfStringRight,
   startOfWordLeft,
   startOfWordRight,
 } from './parsing/boundaries'
@@ -40,6 +42,7 @@ import { get, set } from './store'
 import { registerCmd } from './utils/registerCmd'
 
 registerCmd('chords.debug', () => set('debug', !get('debug')))
+registerCmd('chords.debugJump', () => set('debugJump', !get('debugJump')))
 
 // registerCmd('chords.repeatLastChord', repeatChord)
 
@@ -51,13 +54,6 @@ registerCmd('chords.setInsertMode', () => set('mode', 'insert'))
 registerCmd('chords.setNormalMode', () => set('mode', 'normal'))
 registerCmd('chords.setVisualMode', () => set('mode', 'visual'))
 registerCmd('chords.setLeaderMode', () => set('mode', 'leader'))
-
-registerCmd('chords.enableBlockCursorCorrection', () =>
-  set('blockCursorCorrection', true)
-)
-registerCmd('chords.disableBlockCursorCorrection', () =>
-  set('blockCursorCorrection', false)
-)
 
 registerCmd('chords.highlightSelections', highlightSelections)
 
@@ -92,33 +88,36 @@ registerCmd('chords.cursorDownSelect', () =>
   moveCursorLinewise(1, { select: true })
 )
 
-registerCmd('chords.cursorToWordStartRight', () =>
-  cursorTo(startOfWordRight, { offset: 1 })
-)
-registerCmd('chords.cursorToWordEndRight', () =>
-  cursorTo(endOfWordRight, { offset: 1 })
-)
+registerCmd('chords.cursorToWordStartRight', () => cursorTo(startOfWordRight))
+registerCmd('chords.cursorToWordEndRight', () => cursorTo(endOfWordRight))
 registerCmd('chords.cursorToWordStartRightSelect', () =>
-  cursorTo(startOfWordRight, { offset: 1, select: true })
+  cursorTo(startOfWordRight, { select: true })
 )
 registerCmd('chords.cursorToWordEndRightSelect', () =>
-  cursorTo(endOfWordRight, { offset: 1, select: true })
+  cursorTo(endOfWordRight, { select: true })
 )
-registerCmd('chords.cursorToWordStartLeft', () =>
-  cursorTo(startOfWordLeft, { offset: -1 })
-)
-registerCmd('chords.cursorToWordEndLeft', () =>
-  cursorTo(endOfWordLeft, { offset: -1 })
-)
+registerCmd('chords.cursorToWordStartLeft', () => cursorTo(startOfWordLeft))
+registerCmd('chords.cursorToWordEndLeft', () => cursorTo(endOfWordLeft))
 registerCmd('chords.cursorToWordStartLeftSelect', () =>
-  cursorTo(startOfWordLeft, { offset: -1, select: true })
+  cursorTo(startOfWordLeft, { select: true })
 )
 registerCmd('chords.cursorToWordEndLeftSelect', () =>
-  cursorTo(endOfWordLeft, { offset: -1, select: true })
+  cursorTo(endOfWordLeft, { select: true })
 )
 
-registerCmd('chords.selectAroundWord', selectAroundWord)
-// registerCmd('chords.selectInsideWord', selectInsideWord)
+registerCmd('chords.cursorToStringStartRight', () =>
+  cursorTo(startOfStringRight)
+)
+registerCmd('chords.cursorToStringEndRight', () => cursorTo(endOfStringRight))
+registerCmd('chords.cursorToStringStartRightSelect', () =>
+  cursorTo(startOfStringRight, { select: true })
+)
+registerCmd('chords.cursorToStringEndRightSelect', () =>
+  cursorTo(endOfStringRight, { select: true })
+)
+
+// registerCmd('chords.selectAroundWord', selectAroundWord)
+registerCmd('chords.selectInsideWord', selectInsideWord)
 
 // registerCmd('chords.cursorToCharRight', () =>
 //   awaitCapture((text) => {

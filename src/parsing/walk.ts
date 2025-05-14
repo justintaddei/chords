@@ -8,15 +8,23 @@ const kernelSlice = (chars: string[], start: number, end: number) => {
   return charsInKernel
 }
 
-export const walkRight = function* (
-  doc: vscode.TextDocument,
-  offset: number,
+export const walkRight = function* ({
+  doc,
+  offset,
+  kernel,
+  startUnderCursor = false,
+}: {
+  doc: vscode.TextDocument
+  offset: number
   kernel: [number, number]
-) {
+  startUnderCursor?: boolean
+}) {
+  const nudge = startUnderCursor ? 0 : 1
+
   const text = doc
     .getText(
       new vscode.Range(
-        doc.positionAt(offset - kernel[0]),
+        doc.positionAt(offset + nudge - kernel[0]),
         doc.lineAt(doc.lineCount - 1).range.end
       )
     )
@@ -25,18 +33,26 @@ export const walkRight = function* (
   for (let i = kernel[0]; i < text.length; i++) {
     const chars = kernelSlice(text, i - kernel[0], i + kernel[1] + 1)
 
-    yield { chars, position: doc.positionAt(offset + i - kernel[0]) }
+    yield { chars, position: doc.positionAt(offset + nudge + i - kernel[0]) }
   }
 }
 
-export const walkLeft = function* (
-  doc: vscode.TextDocument,
-  offset: number,
-  kernel: [number, number],
+export const walkLeft = function* ({
+  doc,
+  offset,
+  kernel,
+  selection,
+  startUnderCursor = false,
+}: {
+  doc: vscode.TextDocument
+  offset: number
+  kernel: [number, number]
   selection: vscode.Selection
-) {
-  const nudge = !selection.isEmpty && !selection.isReversed ? -1 : 0
-  const blockCursorCorrectedOffset = offset + nudge
+  startUnderCursor?: boolean
+}) {
+  const nudge = !selection.isEmpty && !selection.isReversed ? -1 : -0
+  const cursorOffset = startUnderCursor ? 0 : -1
+  const blockCursorCorrectedOffset = offset + nudge + cursorOffset
 
   const text = doc
     .getText(

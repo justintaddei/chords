@@ -104,6 +104,10 @@
       {
         "command": "chords.debug",
         "title": "Chords: Toggle verbose logging"
+      },
+      {
+        "command": "chords.debugJump",
+        "title": "Chords: Toggle motion debug highlighting"
       }
     ],
     "configuration": {

@@ -4,7 +4,7 @@ import { debug } from '../utils/debug'
 import { recordCursorColumns } from '../utils/recordColumns'
 import {
   characterToColumn,
-  isInvertedSingleChar,
+  isInvalidSingleChar,
   moveActive,
   moveAnchor,
   reverse,
@@ -47,7 +47,7 @@ const applyBlockCursorCorrection = (
 ): vscode.Selection => {
   if (prev.isEmpty && curr.isEmpty) {
     debug(
-      'Applying block cursor correction to updated cursor positions (prev -> updated -> corrected)'
+      'Applying block cursor corrections to updated cursor positions (prev -> updated -> corrected)'
     )
 
     const lineLength = editor.document.lineAt(curr.active.line).text.length
@@ -76,8 +76,11 @@ const applyBlockCursorCorrection = (
     return new vscode.Selection(correctedPosition, correctedPosition)
   }
 
+  // If the anchor moved, this is not the same selection.
+  if (!prev.anchor.isEqual(curr.anchor)) return curr
+
   debug(
-    'Applying block cursor correction to updated selections (prev -> updated -> corrected)'
+    'Applying block cursor corrections to updated selections (prev -> updated -> corrected)'
   )
 
   if (prev.isReversed && (!curr.isReversed || curr.isEmpty)) {
@@ -116,7 +119,7 @@ const applyBlockCursorCorrection = (
     return moveActive(correctedAnchor, -1, editor)
   }
 
-  if (isInvertedSingleChar(curr)) {
+  if (isInvalidSingleChar(curr)) {
     debug('abc|de]fg -> abc|d]efg -> abc[d|efg')
 
     if (columnRecordIndex !== -1) decrementColumn(columnRecordIndex)

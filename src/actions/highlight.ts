@@ -3,7 +3,10 @@ import { config } from '../config'
 // import { nearestMatch } from '../matchers/nearestMatch'
 // import { updateSelections } from './updateSelections'
 
-export const highlightSelections = () => {
+export const highlightSelections = (
+  selections?: readonly vscode.Selection[],
+  delay?: number
+) => {
   if (!vscode.window.activeTextEditor) return
 
   const decoration = vscode.window.createTextEditorDecorationType({
@@ -13,12 +16,12 @@ export const highlightSelections = () => {
 
   vscode.window.activeTextEditor.setDecorations(
     decoration,
-    vscode.window.activeTextEditor.selections
+    selections ?? vscode.window.activeTextEditor.selections
   )
 
   setTimeout(
     () => decoration.dispose(),
-    config().get('selectionHighlightDuration')
+    delay ?? config().get('selectionHighlightDuration')
   )
 }
 

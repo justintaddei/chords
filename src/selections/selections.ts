@@ -63,10 +63,13 @@ export const length = (selection: vscode.Selection): number => {
   return selection.end.character - selection.start.character
 }
 
+export const isEmpty = (selection: vscode.Selection): boolean =>
+  selection.isEmpty || isSingleChar(selection)
+
 export const isSingleChar = (selection: vscode.Selection): boolean =>
   length(selection) === 1 && selection.isReversed
 
-export const isInvertedSingleChar = (selection: vscode.Selection): boolean =>
+export const isInvalidSingleChar = (selection: vscode.Selection): boolean =>
   length(selection) === 1 && !selection.isReversed
 
 export const characterToColumn = (

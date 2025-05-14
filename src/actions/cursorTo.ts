@@ -4,26 +4,44 @@ import { columnToCharacter, moveActiveWrap } from '../selections/selections'
 import { updateSelections } from '../selections/updateSelections'
 import { safeTranslate } from '../selections/utils/safeTranslate'
 import { validatePosition } from '../selections/utils/validation'
+import { get } from '../store'
 
 export const cursorTo = (
-  predicate: (
-    doc: vscode.TextDocument,
-    offset: number,
-    selection: vscode.Selection,
-    select: boolean
-  ) => CharPosition | null,
-  { offset = 0, select = false } = {}
+  predicate: (options: {
+    doc: vscode.TextDocument
+    offset: number
+    selection: vscode.Selection
+    startUnderCursor?: boolean
+  }) => CharPosition | [CharPosition, CharPosition] | null,
+  { select = false } = {}
 ) => {
   updateSelections((selection, editor) => {
     const doc = editor.document
 
-    let match: CharPosition | null = null
+    let match: CharPosition | [CharPosition, CharPosition] | null = null
 
-    const docOffset = Math.max(0, doc.offsetAt(selection.active) + offset)
+    const docOffset = Math.max(0, doc.offsetAt(selection.active))
 
-    match = predicate(doc, docOffset, selection, select)
+    match = predicate({ doc, offset: docOffset, selection })
 
     if (!match) return null
+
+    if (Array.isArray(match)) {
+      const [start, end] = match
+
+      if (get('debugJump')) {
+        start.highlight()
+        end.highlight()
+        return null
+      }
+
+      return end.selectFrom(start)
+    }
+
+    if (get('debugJump')) {
+      match.highlight()
+      return null
+    }
 
     return select ? match.selectFrom(selection) : match.cursor
   })

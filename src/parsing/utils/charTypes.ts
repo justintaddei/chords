@@ -1,4 +1,4 @@
-import { debug } from './debug'
+import { debug } from '../../utils/debug'
 
 export const isWord = (char: string) => /\w/.test(char)
 export const isPunctuation = (char: string) => /[^\w\s]/.test(char)

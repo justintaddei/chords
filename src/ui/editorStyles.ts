@@ -1,7 +1,7 @@
 import vscode from 'vscode'
 import { config, editorConfig } from '../config'
+import { length } from '../selections/selections'
 import { Mode, get, subscribe } from '../store'
-import { length } from '../utils/selections'
 import { setCursorStyle, setLineNumbers } from '../utils/vscodeStyles'
 import { disposable } from '../utils/vscodeSubscriptionManager'
 

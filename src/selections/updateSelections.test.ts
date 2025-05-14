@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import * as vscode from 'vscode'
 import { get, set } from '../store'
-import * as recordColumnsModule from './recordColumns' // Import the module to spy on
+import * as recordColumnsModule from '../utils/recordColumns' // Import the module to spy on
 import { updateSelections } from './updateSelections'
 
 suite('updateSelections', () => {

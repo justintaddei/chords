@@ -1,11 +1,9 @@
 import vscode from 'vscode'
-import {
-  columnToCharacter,
-  moveActiveWrap,
-  safeTranslate,
-  validatePosition,
-} from '../utils/selections'
-import { updateSelections } from '../utils/updateSelections'
+import { CharPosition } from '../parsing/utils/charPosition'
+import { columnToCharacter, moveActiveWrap } from '../selections/selections'
+import { updateSelections } from '../selections/updateSelections'
+import { safeTranslate } from '../selections/utils/safeTranslate'
+import { validatePosition } from '../selections/utils/validation'
 
 export const cursorTo = (
   predicate: (
@@ -13,13 +11,13 @@ export const cursorTo = (
     offset: number,
     selection: vscode.Selection,
     select: boolean
-  ) => vscode.Position | null,
+  ) => CharPosition | null,
   { offset = 0, select = false } = {}
 ) => {
   updateSelections((selection, editor) => {
     const doc = editor.document
 
-    let match: vscode.Position | null = null
+    let match: CharPosition | null = null
 
     const docOffset = Math.max(0, doc.offsetAt(selection.active) + offset)
 
@@ -27,7 +25,7 @@ export const cursorTo = (
 
     if (!match) return null
 
-    return new vscode.Selection(select ? selection.anchor : match, match)
+    return select ? match.selectFrom(selection) : match.cursor
   })
 }
 

@@ -1,6 +1,6 @@
 import vscode from 'vscode'
-import { safeTranslate } from '../utils/selections'
-import { updateSelections } from '../utils/updateSelections'
+import { updateSelections } from '../selections/updateSelections'
+import { safeTranslate } from '../selections/utils/safeTranslate'
 
 export const collapseSelections = (
   direction: 'start' | 'end' | 'anchor' | 'active' | 'left'

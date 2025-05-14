@@ -1,5 +1,5 @@
 import vscode from 'vscode'
-import { safeTranslate } from './selections'
+import { safeTranslate } from '../../selections/utils/safeTranslate'
 
 /**
  * Retrieves the character at a specified position in a text editor.

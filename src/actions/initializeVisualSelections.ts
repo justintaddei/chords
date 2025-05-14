@@ -1,7 +1,7 @@
 import vscode from 'vscode'
+import { updateSelections } from '../selections/updateSelections'
+import { safeTranslate } from '../selections/utils/safeTranslate'
 import { get } from '../store'
-import { safeTranslate } from '../utils/selections'
-import { updateSelections } from '../utils/updateSelections'
 
 export const correctVisualSelections = () => {
   updateSelections(

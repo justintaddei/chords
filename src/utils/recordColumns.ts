@@ -1,7 +1,6 @@
 import vscode from 'vscode'
+import { characterToColumn } from '../selections/selections'
 import { set } from '../store'
-import { debug } from './debug'
-import { characterToColumn } from './selections'
 
 export const recordCursorColumns = () => {
   const editor = vscode.window.activeTextEditor

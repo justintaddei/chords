@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import * as vscode from 'vscode'
-import { createValidPosition } from './selections'
+import { createValidPosition } from './utils/validation'
 
 suite('selections', () => {
   let mockEditor: vscode.TextEditor

@@ -1,9 +1,13 @@
 import vscode from 'vscode'
-import { charAt } from '../utils/charAt'
-import { CharType, getCharType, isEOF, isNewLine } from '../utils/charTypes'
-import { walkLeft, walkRight } from '../utils/textWalker'
-import { updateSelections } from '../utils/updateSelections'
-
+import { charAt } from '../parsing/utils/charAt'
+import {
+  CharType,
+  getCharType,
+  isEOF,
+  isNewLine,
+} from '../parsing/utils/charTypes'
+import { walkRight } from '../parsing/walk'
+import { updateSelections } from '../selections/updateSelections'
 const searchRightIntoWhitespace = (
   doc: vscode.TextDocument,
   offset: number,

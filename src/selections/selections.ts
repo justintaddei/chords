@@ -1,43 +1,6 @@
 import vscode from 'vscode'
 import { editorConfig } from '../config'
-
-export const validatePosition = (
-  position: vscode.Position,
-  { document }: vscode.TextEditor
-): vscode.Position => {
-  const { character } = position
-
-  return document.validatePosition(position).with({
-    character: Math.max(
-      0,
-      Math.min(character, document.lineAt(position.line).text.length)
-    ),
-  })
-}
-
-export const createValidPosition = (
-  line: number,
-  character: number,
-  editor: vscode.TextEditor
-): vscode.Position => {
-  return validatePosition(
-    new vscode.Position(Math.max(0, line), Math.max(0, character)),
-    editor
-  )
-}
-
-export const safeTranslate = (
-  position: vscode.Position,
-  lineDelta: number,
-  characterDelta: number,
-  editor: vscode.TextEditor
-) => {
-  return createValidPosition(
-    Math.max(0, position.line + lineDelta),
-    Math.max(0, position.character + characterDelta),
-    editor
-  )
-}
+import { createValidPosition } from '../selections/utils/validation'
 
 export const moveAnchor = (
   selection: vscode.Selection,
@@ -133,13 +96,4 @@ export const columnToCharacter = (
     0,
     Math.min(visualCharacter - tabCount * tabSize + tabCount, line.text.length)
   )
-}
-
-export const edgePlacement = (
-  selection: vscode.Selection,
-  position: vscode.Position
-): 'left' | 'right' => {
-  const { anchor } = selection
-
-  return position.isAfter(anchor) ? 'right' : 'left'
 }

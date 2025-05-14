@@ -14,7 +14,7 @@ import {
   endOfWordRight,
   startOfWordLeft,
   startOfWordRight,
-} from './movements/boundaries'
+} from './parsing/boundaries'
 // import { cursorTo } from './actions/cursorTo'
 // import { cursorToParagraph } from './actions/cursorToParagraph'
 // import {

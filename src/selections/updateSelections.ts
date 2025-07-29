@@ -54,24 +54,12 @@ const applyBlockCursorCorrection = (
     if (lineLength === 0) return curr
     if (curr.active.character < lineLength) return curr
 
-    let correctedPosition: vscode.Position
-
-    if (
-      prev.active.line !== curr.active.line ||
-      curr.active.line === editor.document.lineCount - 1
-    ) {
-      debug('N/A -> abcdefg| -> abcdef|g (prevented cursor on eol)')
-      correctedPosition = createValidPosition(
-        curr.active.line,
-        lineLength - 1,
-        editor
-      )
-    } else {
-      debug(
-        'abcdef|g -> abcdefg| -> [\\n]abcdef|g (cursor moved forward to eol, repositioned it to the start of next line)'
-      )
-      correctedPosition = createValidPosition(curr.active.line + 1, 0, editor)
-    }
+    debug('N/A -> abcdefg| -> abcdef|g (prevented cursor on eol)')
+    let correctedPosition = createValidPosition(
+      curr.active.line,
+      lineLength - 1,
+      editor
+    )
 
     return new vscode.Selection(correctedPosition, correctedPosition)
   }
@@ -83,7 +71,7 @@ const applyBlockCursorCorrection = (
     'Applying block cursor corrections to updated selections (prev -> updated -> corrected)'
   )
 
-  if (prev.isReversed && (!curr.isReversed || curr.isEmpty)) {
+  if (prev.isReversed && !prev.isEmpty && (!curr.isReversed || curr.isEmpty)) {
     if (naive)
       debug(
         'abc[d|efg -> abcd[|efg -> abc|de]fg (anchor moves one char to the left, active moves one char to the right)'

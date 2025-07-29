@@ -17,8 +17,12 @@
   "engines": {
     "vscode": "^1.99.0"
   },
-  "categories": ["Keymaps"],
-  "activationEvents": ["onStartupFinished"],
+  "categories": [
+    "Keymaps"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "keybindings": [
@@ -60,13 +64,13 @@
       },
       {
         "key": "escape",
-        "command": "chords.setNormalMode",
+        "command": "chords.mode.normal",
         "when": "editorTextFocus && !suggestWidgetVisible && chords.mode !== 'normal' && chords.capture === false"
       },
       {
         "key": "escape",
-        "command": "chords.clearChord",
-        "when": "editorTextFocus && !suggestWidgetVisible && chords.chordVisible === true && chords.capture === false"
+        "command": "chords.clearCmd",
+        "when": "editorTextFocus && !suggestWidgetVisible && chords.cmdVisible === true && chords.capture === false"
       },
       {
         "key": "escape",
@@ -81,19 +85,19 @@
     ],
     "commands": [
       {
-        "command": "chords.setInsertMode",
+        "command": "chords.mode.insert",
         "title": "Chords: Set mode to INSERT"
       },
       {
-        "command": "chords.setNormalMode",
+        "command": "chords.mode.normal",
         "title": "Chords: Set mode to NORMAL"
       },
       {
-        "command": "chords.setVisualMode",
+        "command": "chords.mode.visual",
         "title": "Chords: Set mode to VISUAL"
       },
       {
-        "command": "chords.setLeaderMode",
+        "command": "chords.mode.leader",
         "title": "Chords: Set mode to LEADER"
       },
       {
@@ -115,7 +119,12 @@
       "properties": {
         "chords.defaultMode": {
           "type": "string",
-          "enum": ["insert", "normal", "visual", "leader"],
+          "enum": [
+            "insert",
+            "normal",
+            "visual",
+            "leader"
+          ],
           "default": "insert",
           "description": "The mode that is selected when VS Code first opens"
         },
@@ -136,13 +145,23 @@
         },
         "chords.normalMode.lineNumbers": {
           "type": "string",
-          "enum": ["off", "on", "relative", "interval"],
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
           "default": "relative",
           "description": "The line numbers to show in normal mode"
         },
         "chords.visualMode.lineNumbers": {
           "type": "string",
-          "enum": ["off", "on", "relative", "interval"],
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
           "default": "relative",
           "description": "The line numbers to show in visual mode"
         },

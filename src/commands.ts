@@ -1,251 +1,127 @@
 import { collapseSelections } from './actions/collapseSelections'
-import {
-  cursorTo,
-  moveCursorCharacterwise,
-  moveCursorLinewise,
-} from './actions/cursorTo'
-// import { killCapsLockRemapper } from './utils/capsLockRemapper'
 import { highlightSelections } from './actions/highlight'
 import { restoreSelections } from './actions/restoreSelections'
 import { saveSelections } from './actions/saveSelections'
-import { selectInsideWord } from './actions/selectInsideWord'
 import {
-  endOfStringRight,
-  endOfWordLeft,
-  endOfWordRight,
-  startOfStringRight,
-  startOfWordLeft,
-  startOfWordRight,
-} from './parsing/boundaries'
-// import { cursorTo } from './actions/cursorTo'
-// import { cursorToParagraph } from './actions/cursorToParagraph'
-// import {
-//   endOfWordLeft,
-//   endOfWordLeftSelect,
-//   endOfWordRight,
-//   endOfWordRightSelect,
-//   startOfWordLeft,
-//   startOfWordLeftSelect,
-//   startOfWordRight,
-//   startOfWordRightSelect,
-// } from './actions/cursorToWordEdges'
-// import { restoreSelections } from './actions/restoreSelections'
-// import { saveSelections } from './actions/saveSelections'
-// import { selectPair } from './actions/selectPair'
-// import { selectSymbolAtCursor } from './actions/selectSymbolAtCursor'
-// import { selectAroundWord, selectInsideWord } from './actions/selectWord'
-// import { selectXMLTag } from './actions/selectXMLTag'
-// import { shrinkSelections } from './actions/shrinkSelection'
-// import { awaitCapture, clearCapture } from './inputHandler'
-// import { repeatChord, replay } from './recorder'
-import { get, set } from './store'
+  motions
+} from './motions'
+import { operators } from './operations'
+import { get, reset, set } from './store'
 import { registerCmd } from './utils/registerCmd'
+import * as vscode from 'vscode'
 
-registerCmd('chords.debug', () => set('debug', !get('debug')))
-registerCmd('chords.debugJump', () => set('debugJump', !get('debugJump')))
+type CmdWithArg = {
+  arg: 'char' | 'pattern'
+  exec: () => void
+}
+type CmdType = string | CmdWithArg | (() => void)
 
-// registerCmd('chords.repeatLastChord', repeatChord)
+type CmdMap = Record<string, CmdType>
 
-registerCmd('chords.toggleRecording', () => set('recording', !get('recording')))
+const cmds = {
+  // debug cmds
+  'chords.debug': () => set('debug', !get('debug')),
+  'chords.debugJump': () => set('debugJump', !get('debugJump')),
 
-// registerCmd('chords.replay', replay)
+  // select modes
+  'chords.mode.insert': () => set('mode', 'insert'),
+  'chords.mode.normal': () => set('mode', 'normal'),
+  'chords.mode.visual': () => set('mode', 'visual'),
+  'chords.mode.visual-block': () => set('mode', 'visual block'),
+  'chords.mode.visual-line': () => set('mode', 'visual line'),
+  'chords.mode.leader': () => set('mode', 'leader'),
 
-registerCmd('chords.setInsertMode', () => set('mode', 'insert'))
-registerCmd('chords.setNormalMode', () => set('mode', 'normal'))
-registerCmd('chords.setVisualMode', () => set('mode', 'visual'))
-registerCmd('chords.setLeaderMode', () => set('mode', 'leader'))
+  // commands
+  'chords.command.undo': 'editor.action.undo',
+  'chords.command.redo': 'editor.action.redo',
+  'chords.command.deleteLeft': 'deleteLeft',
+  'chords.command.deleteRight': 'deleteRight',
 
-registerCmd('chords.highlightSelections', highlightSelections)
+  // operations
+  'chords.operation.change': operators.change,
+  'chords.operation.delete': operators.deleteLeft,
+  'chords.operation.yank': operators.yank,
+  'chords.operation.cut': operators.cut,
+  'chords.operation.swapCase': operators.swapCase,
+  'chords.operation.lowerCase': operators.lowerCase,
+  'chords.operation.upperCase': operators.upperCase,
 
-// registerCmd('chords.clearCapture', clearCapture)
 
-registerCmd('chords.clearChord', () => set('chord', []))
+  // motions - left-right
+  /*
+  TODO: "except after the "$" command" is not currently possible
+  These commands move to the specified line. They stop when reaching the first
+  or the last line. The first two commands put the cursor in the same column
+  (if possible) as it was after the last command that changed the column,
+  except after the "$" command, then the cursor will be put on the last
+  character of the line.
+  */
+  'chords.motion.left': motions.left,
+  'chords.motion.right': motions.right,
+  'chords.motion.firstChar': motions.firstChar,
+  'chords.motion.lastChar': motions.lastChar,
+  'chords.motion.firstNoneBlankChar': motions.firstNoneBlankChar,
+  'chords.motion.lastNoneBlankChar': motions.lastNoneBlankChar,
+  'chords.motion.findCharRight': {
+    arg: 'char',
+    exec: motions.findCharRight
+  },
+  'chords.motion.findCharLeft': {
+    arg: 'char',
+    exec: motions.findCharLeft
+  },
+  'chords.motion.tillCharRight': {
+    arg: 'char',
+    exec: motions.tillCharRight
+  },
+  'chords.motion.tillCharLeft': {
+    arg: 'char',
+    exec: motions.tillCharLeft
+  },
+  'chords.motion.repeatFind': () => { throw new Error('Not implemented') },
 
-registerCmd('chords.saveSelections', saveSelections)
+  // motions - up-down
+  'chords.motion.up': motions.up,
+  'chords.motion.down': motions.down,
 
-registerCmd('chords.restoreSelections', restoreSelections)
+  // motions - words
+  'chords.motion.startOfWordRight': motions.startOfWordRight,
+  'chords.motion.startOfWordLeft': motions.startOfWordLeft,
+  'chords.motion.endOfWordRight': motions.endOfWordRight,
+  'chords.motion.endOfWordLeft': motions.endOfWordLeft,
+  'chords.motion.startOfStringRight': motions.startOfStringRight,
+  'chords.motion.startOfStringLeft': motions.startOfStringLeft,
+  'chords.motion.endOfStringRight': motions.endOfStringRight,
+  'chords.motion.endOfStringLeft': motions.endOfStringLeft,
 
-registerCmd('chords.restoreCursors', () => {
-  restoreSelections()
-  collapseSelections('anchor')
-})
+  // special commands
+  'chords.highlightSelections': highlightSelections,
+  'chords.clearCmd': () => reset('cmdStr'),
+  'chords.saveSelections': saveSelections,
+  'chords.restoreSelections': restoreSelections,
+  'chords.restoreCursors': () => {
+    restoreSelections()
+    collapseSelections('anchor')
+  },
 
-registerCmd('chords.cursorLeft', () => moveCursorCharacterwise(-1))
-registerCmd('chords.cursorRight', () => moveCursorCharacterwise(1))
-registerCmd('chords.cursorUp', () => moveCursorLinewise(-1))
-registerCmd('chords.cursorDown', () => moveCursorLinewise(1))
+  // motions - text objects
+} satisfies CmdMap
 
-registerCmd('chords.cursorLeftSelect', () =>
-  moveCursorCharacterwise(-1, { select: true })
-)
-registerCmd('chords.cursorRightSelect', () =>
-  moveCursorCharacterwise(1, { select: true })
-)
-registerCmd('chords.cursorUpSelect', () =>
-  moveCursorLinewise(-1, { select: true })
-)
-registerCmd('chords.cursorDownSelect', () =>
-  moveCursorLinewise(1, { select: true })
-)
+export const getArgType = (cmd: string): 'char' | 'pattern' | null => {
+  if (!Object.keys(cmds).includes(cmd)) return null
 
-registerCmd('chords.cursorToWordStartRight', () => cursorTo(startOfWordRight))
-registerCmd('chords.cursorToWordEndRight', () => cursorTo(endOfWordRight))
-registerCmd('chords.cursorToWordStartRightSelect', () =>
-  cursorTo(startOfWordRight, { select: true })
-)
-registerCmd('chords.cursorToWordEndRightSelect', () =>
-  cursorTo(endOfWordRight, { select: true })
-)
-registerCmd('chords.cursorToWordStartLeft', () => cursorTo(startOfWordLeft))
-registerCmd('chords.cursorToWordEndLeft', () => cursorTo(endOfWordLeft))
-registerCmd('chords.cursorToWordStartLeftSelect', () =>
-  cursorTo(startOfWordLeft, { select: true })
-)
-registerCmd('chords.cursorToWordEndLeftSelect', () =>
-  cursorTo(endOfWordLeft, { select: true })
-)
+  const command = cmds[cmd as keyof typeof cmds]
+  if (typeof command === 'string') return null
+  if (typeof command === 'function') return null
 
-registerCmd('chords.cursorToStringStartRight', () =>
-  cursorTo(startOfStringRight)
-)
-registerCmd('chords.cursorToStringEndRight', () => cursorTo(endOfStringRight))
-registerCmd('chords.cursorToStringStartRightSelect', () =>
-  cursorTo(startOfStringRight, { select: true })
-)
-registerCmd('chords.cursorToStringEndRightSelect', () =>
-  cursorTo(endOfStringRight, { select: true })
-)
+  return command.arg
+}
 
-// registerCmd('chords.selectAroundWord', selectAroundWord)
-registerCmd('chords.selectInsideWord', selectInsideWord)
-
-// registerCmd('chords.cursorToCharRight', () =>
-//   awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'right',
-//     })
-//   })
-// )
-
-// registerCmd('chords.cursorToCharLeft', () =>
-//   awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'left',
-//     })
-//   })
-// )
-
-// registerCmd('chords.cursorToCharRightSelect', () =>
-//   awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'right',
-//       select: true,
-//     })
-//   })
-// )
-
-// registerCmd('chords.cursorToCharLeftSelect', () =>
-//   awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'left',
-//       select: true,
-//       inclusive: false,
-//     })
-//   })
-// )
-
-// registerCmd('chords.cursorToMatchRight', () => {
-//   set('highlightCapture', 'right')
-//   return awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'right',
-//       inclusive: false,
-//       endOfMatch: get('captureCommittedWithShift'),
-//     })
-//   }, false)
-// })
-
-// registerCmd('chords.cursorToMatchLeft', () => {
-//   set('highlightCapture', 'left')
-//   return awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'left',
-//       inclusive: false,
-//       endOfMatch: get('captureCommittedWithShift'),
-//     })
-//   }, false)
-// })
-
-// registerCmd('chords.cursorToMatchRightSelect', () => {
-//   set('highlightCapture', 'right')
-//   return awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'right',
-//       select: true,
-//       inclusive: false,
-//       endOfMatch: get('captureCommittedWithShift'),
-//     })
-//   }, false)
-// })
-
-// registerCmd('chords.cursorToMatchLeftSelect', () => {
-//   set('highlightCapture', 'left')
-//   return awaitCapture((text) => {
-//     cursorTo({
-//       text,
-//       direction: 'left',
-//       select: true,
-//       inclusive: false,
-//       endOfMatch: get('captureCommittedWithShift'),
-//     })
-//   }, false)
-// })
-
-// registerCmd('chords.selectAroundLeft', (...ends: [string, string]) =>
-//   selectPair(ends, 'left')
-// )
-
-// registerCmd('chords.selectAroundRight', (...ends: [string, string]) =>
-//   selectPair(ends, 'right')
-// )
-
-// registerCmd('chords.selectAroundXMLTag', selectXMLTag)
-
-// registerCmd('chords.selectInsideLeft', (...ends: [string, string]) =>
-//   selectPair(ends, 'left', true)
-// )
-
-// registerCmd('chords.selectInsideRight', (...ends: [string, string]) =>
-//   selectPair(ends, 'right', true)
-// )
-
-// registerCmd('chords.selectInsideXMLTag', () => selectXMLTag(true))
-
-// registerCmd('chords.shrinkSelections', shrinkSelections)
-
-// registerCmd('chords.selectSymbolAtCursor', selectSymbolAtCursor)
-
-// registerCmd('chords.paragraphUp', () => cursorToParagraph('up'))
-
-// registerCmd('chords.paragraphDown', () => cursorToParagraph('down'))
-
-// registerCmd('chords.paragraphUpSelect', () => cursorToParagraph('up', true))
-
-// registerCmd('chords.paragraphDownSelect', () => cursorToParagraph('down', true))
-
-// registerCmd('chords.replaceCharUnderCursor', () =>
-//   awaitCapture(async (char) => {
-//     await vscode.commands.executeCommand('deleteRight')
-//     await vscode.commands.executeCommand('default:type', { text: char })
-//     await vscode.commands.executeCommand('cursorLeft')
-//   })
-// )
-
-// registerCmd('chords.killCapsLockRemapper', killCapsLockRemapper)
+for (const [cmd, action] of Object.entries(cmds)) {
+  if (typeof action === 'string')
+    registerCmd(cmd, () => vscode.commands.executeCommand(action))
+  else if (typeof action === 'function')
+    registerCmd(cmd, action)
+  else
+    registerCmd(cmd, action.exec)
+}

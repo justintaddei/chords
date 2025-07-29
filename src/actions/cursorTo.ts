@@ -1,19 +1,19 @@
 import vscode from 'vscode'
 import { CharPosition } from '../parsing/utils/charPosition'
-import { columnToCharacter, moveActiveWrap } from '../selections/selections'
+import { columnToCharacter, moveActive } from '../selections/selections'
 import { updateSelections } from '../selections/updateSelections'
 import { safeTranslate } from '../selections/utils/safeTranslate'
 import { validatePosition } from '../selections/utils/validation'
 import { get } from '../store'
 
-export const cursorTo = (
+export const moveTo = (
   predicate: (options: {
     doc: vscode.TextDocument
     offset: number
     selection: vscode.Selection
     startUnderCursor?: boolean
   }) => CharPosition | [CharPosition, CharPosition] | null,
-  { select = false } = {}
+  { select = get('cmd').select } = {}
 ) => {
   updateSelections((selection, editor) => {
     const doc = editor.document
@@ -32,7 +32,6 @@ export const cursorTo = (
       if (get('debugJump')) {
         start.highlight()
         end.highlight()
-        return null
       }
 
       return end.selectFrom(start)
@@ -40,20 +39,19 @@ export const cursorTo = (
 
     if (get('debugJump')) {
       match.highlight()
-      return null
     }
 
     return select ? match.selectFrom(selection) : match.cursor
   })
 }
 
-export const moveCursorCharacterwise = (
+export const moveCols = (
   chars: number,
-  { select = false } = {}
+  { select = get('cmd').select } = {}
 ) => {
   updateSelections(
     (selection, editor) => {
-      const updatedActive = moveActiveWrap(selection, chars, editor)
+      const updatedActive = moveActive(selection, chars, editor)
       if (select) return updatedActive
 
       return new vscode.Selection(updatedActive.active, updatedActive.active)
@@ -62,7 +60,7 @@ export const moveCursorCharacterwise = (
   )
 }
 
-export const moveCursorLinewise = (lines: number, { select = false } = {}) => {
+export const moveRows = (lines: number, { select = get('cmd').select } = {}) => {
   updateSelections(
     (selection, editor, lastRecordedColumn) => {
       const updatedActive = validatePosition(
@@ -90,4 +88,21 @@ export const moveCursorLinewise = (lines: number, { select = false } = {}) => {
     },
     { naive: true, skipColumnRecording: true }
   )
+}
+
+export const moveAbsCol = (
+  col: number,
+  { select = get('cmd').select } = {}
+) => {
+  updateSelections((selection, editor) => {
+    const updatedActive = validatePosition(
+      selection.active.with({ character: col }),
+      editor
+    )
+
+    return new vscode.Selection(
+      select ? selection.anchor : updatedActive,
+      updatedActive
+    )
+  }, { naive: true })
 }

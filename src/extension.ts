@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
 import './commands'
-import { onInput } from './inputHandler'
+import { onInput } from './input'
 import { destroy, set, subscribe } from './store'
 import './ui/editorStyles'
-// import { initCapsLockRemapper } from './utils/capsLockRemapper'
+import './ui/statusBar'
 
 let typeCmdHandler: vscode.Disposable | undefined = undefined
 
@@ -35,7 +35,6 @@ export function activate(context: vscode.ExtensionContext) {
     })
   )
 
-  // initCapsLockRemapper()
 }
 
 export function deactivate() {

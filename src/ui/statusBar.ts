@@ -9,6 +9,8 @@ const modeColors = {
   insert: 'var(--vscode-charts-blue, blue)',
   normal: 'var(--vscode-charts-green, green)',
   visual: 'var(--vscode-charts-orange, orange)',
+  'visual line': 'var(--vscode-charts-orange, orange)',
+  'visual block': 'var(--vscode-charts-orange, orange)',
   leader: 'var(--vscode-charts-purple, purple)',
 } satisfies Record<Mode, string>
 
@@ -57,6 +59,10 @@ export const showWarning = (msg: string) => {
   }, 3000)
 }
 
+export const showError = (msg: string) => {
+  vscode.window.showErrorMessage(msg)
+}
+
 subscribe(['mode', 'recording'], ({ mode, recording }) => {
   modeIndicator.text = recording
     ? `🔴 ${mode.toUpperCase()}`
@@ -64,15 +70,15 @@ subscribe(['mode', 'recording'], ({ mode, recording }) => {
   modeIndicator.color = modeColors[mode]
 })
 
-subscribe(['chord'], ({ chord }) => {
-  const chordText = chord.join('')
+subscribe(['cmdStr'], ({ cmdStr }) => {
+  const cmdText = cmdStr.join('')
 
   vscode.commands.executeCommand(
     'setContext',
-    'chords.chordVisible',
-    !!chordText
+    'chords.cmdVisible',
+    !!cmdText
   )
 
-  if (chordText) setMessage(chordText)
+  if (cmdText) setMessage(cmdText)
   else clearMessage()
 })

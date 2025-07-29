@@ -17,11 +17,11 @@ export const collapseSelections = (
       const collapsePosition = selection.isReversed
         ? selection[direction]
         : safeTranslate(
-            selection[direction],
-            0,
-            selection[direction].character > 0 ? -1 : 0,
-            editor
-          )
+          selection[direction],
+          0,
+          selection[direction].character > 0 ? -1 : 0,
+          editor
+        )
 
       return new vscode.Selection(collapsePosition, collapsePosition)
     },

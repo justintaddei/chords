@@ -1,9 +1,9 @@
-import { endOfWordRight, startOfWordLeft } from '../parsing/boundaries'
+import { endOfWordRight, startOfWordLeft } from '../motions'
 import { isEmpty } from '../selections/selections'
-import { cursorTo } from './cursorTo'
+import { moveTo } from './cursorTo'
 
 export const selectInsideWord = () => {
-  cursorTo(
+  moveTo(
     ({ doc, offset, selection }) => {
       const start = startOfWordLeft({
         doc,

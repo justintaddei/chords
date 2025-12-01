@@ -1,0 +1,932 @@
+{
+  "name": "chords",
+  "displayName": "Chords",
+  "description": "Keyboard-centric navigation for VS Code",
+  "publisher": "justintaddei",
+  "icon": "logo.png",
+  "galleryBanner": {
+    "color": "#181825",
+    "theme": "dark"
+  },
+  "version": "0.0.4",
+  "repository": "https://github.com/justintaddei/chords",
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Keymaps"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "chords.mode.insert",
+        "title": "Chords: Set mode to INSERT"
+      },
+      {
+        "command": "chords.mode.normal",
+        "title": "Chords: Set mode to NORMAL"
+      },
+      {
+        "command": "chords.mode.visual",
+        "title": "Chords: Set mode to VISUAL"
+      },
+      {
+        "command": "chords.mode.visual-line",
+        "title": "Chords: Set mode to VISUAL LINE"
+      },
+      {
+        "command": "chords.mode.visual-block",
+        "title": "Chords: Set mode to VISUAL BLOCK"
+      },
+      {
+        "command": "chords.debug",
+        "title": "Chords: Toggle verbose logging"
+      }
+    ],
+    "configuration": {
+      "title": "Chords",
+      "properties": {
+        "chords.startIn": {
+          "type": "string",
+          "enum": [
+            "insert",
+            "normal",
+            "visual",
+            "visual line",
+            "visual block"
+          ],
+          "default": "insert",
+          "description": "The mode that is selected when VS Code first opens"
+        },
+        "chords.statusIndicator.priority": {
+          "type": "number",
+          "default": 100000,
+          "description": "The priority of the status indicator (higher values appear further to the left)."
+        },
+        "chords.leader": {
+          "type": "string",
+          "default": "<space>",
+          "description": "The key to use as the leader key"
+        },
+        "chords.escape": {
+          "type": "string",
+          "default": "<escape>",
+          "description": "The key to use to exit insert mode"
+        },
+        "chords.normalMode.lineNumbers": {
+          "type": "string",
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
+          "default": "relative",
+          "description": "The line numbers to show in normal mode"
+        },
+        "chords.visualMode.lineNumbers": {
+          "type": "string",
+          "enum": [
+            "off",
+            "on",
+            "relative",
+            "interval"
+          ],
+          "default": "relative",
+          "description": "The line numbers to show in visual mode"
+        },
+        "chords.normalMode.cursorStyle": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "block",
+          "description": "The cursor style to use in normal mode"
+        },
+        "chords.normalMode.operatorPendingCursorStyle": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "underline",
+          "description": "The cursor style to use in normal mode"
+        },
+        "chords.visualMode.cursorStyleEmpty": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "block-outline",
+          "description": "The cursor style to use in visual mode"
+        },
+        "chords.visualMode.cursorStyleSelection": {
+          "type": "string",
+          "enum": [
+            "line",
+            "block",
+            "underline",
+            "line-thin",
+            "underline-thin",
+            "block-outline"
+          ],
+          "default": "line",
+          "description": "The cursor style to use in visual mode"
+        },
+        "chords.selectionHighlightBackgroundColor": {
+          "type": "string",
+          "default": "rgba(255, 255, 255, 0.5)",
+          "description": "The color to use for the selection highlight background"
+        },
+        "chords.selectionHighlightForegroundColor": {
+          "type": "string",
+          "default": "rgb(0,0,0)",
+          "description": "The color to use for the selection highlight foreground"
+        },
+        "chords.selectionHighlightDuration": {
+          "type": "number",
+          "default": 200,
+          "description": "The duration in milliseconds to show the selection highlight"
+        },
+        "chords.keymaps": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "array",
+            "items": false,
+            "prefixItems": [
+              {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "normal",
+                    "visual"
+                  ]
+                }
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Custom keymaps in the format [[modes], 'before', 'after', 'description']"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "key": "tab",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<tab>"
+      },
+      {
+        "key": "enter",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<enter>"
+      },
+      {
+        "key": "escape",
+        "command": "chords.input",
+        "when": "editorTextFocus",
+        "args": "<escape>"
+      },
+      {
+        "key": "backspace",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<backspace>"
+      },
+      {
+        "key": "space",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<space>"
+      },
+      {
+        "key": "delete",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<delete>"
+      },
+      {
+        "key": "ctrl+a",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-a>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-a>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-a>"
+      },
+      {
+        "key": "ctrl+shift+a",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-A>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-A>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-A>"
+      },
+      {
+        "key": "ctrl+b",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-b>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-b>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-b>"
+      },
+      {
+        "key": "ctrl+shift+b",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-B>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-B>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-B>"
+      },
+      {
+        "key": "ctrl+c",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-c>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-c>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-c>"
+      },
+      {
+        "key": "ctrl+shift+c",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-C>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-C>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-C>"
+      },
+      {
+        "key": "ctrl+d",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-d>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-d>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-d>"
+      },
+      {
+        "key": "ctrl+shift+d",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-D>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-D>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-D>"
+      },
+      {
+        "key": "ctrl+e",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-e>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-e>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-e>"
+      },
+      {
+        "key": "ctrl+shift+e",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-E>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-E>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-E>"
+      },
+      {
+        "key": "ctrl+f",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-f>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-f>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-f>"
+      },
+      {
+        "key": "ctrl+shift+f",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-F>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-F>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-F>"
+      },
+      {
+        "key": "ctrl+g",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-g>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-g>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-g>"
+      },
+      {
+        "key": "ctrl+shift+g",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-G>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-G>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-G>"
+      },
+      {
+        "key": "ctrl+h",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-h>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-h>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-h>"
+      },
+      {
+        "key": "ctrl+shift+h",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-H>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-H>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-H>"
+      },
+      {
+        "key": "ctrl+i",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-i>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-i>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-i>"
+      },
+      {
+        "key": "ctrl+shift+i",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-I>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-I>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-I>"
+      },
+      {
+        "key": "ctrl+j",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-j>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-j>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-j>"
+      },
+      {
+        "key": "ctrl+shift+j",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-J>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-J>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-J>"
+      },
+      {
+        "key": "ctrl+k",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-k>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-k>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-k>"
+      },
+      {
+        "key": "ctrl+shift+k",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-K>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-K>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-K>"
+      },
+      {
+        "key": "ctrl+l",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-l>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-l>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-l>"
+      },
+      {
+        "key": "ctrl+shift+l",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-L>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-L>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-L>"
+      },
+      {
+        "key": "ctrl+m",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-m>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-m>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-m>"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-M>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-M>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-M>"
+      },
+      {
+        "key": "ctrl+n",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-n>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-n>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-n>"
+      },
+      {
+        "key": "ctrl+shift+n",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-N>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-N>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-N>"
+      },
+      {
+        "key": "ctrl+o",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-o>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-o>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-o>"
+      },
+      {
+        "key": "ctrl+shift+o",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-O>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-O>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-O>"
+      },
+      {
+        "key": "ctrl+p",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-p>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-p>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-p>"
+      },
+      {
+        "key": "ctrl+shift+p",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-P>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-P>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-P>"
+      },
+      {
+        "key": "ctrl+q",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-q>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-q>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-q>"
+      },
+      {
+        "key": "ctrl+shift+q",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-Q>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-Q>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-Q>"
+      },
+      {
+        "key": "ctrl+r",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-r>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-r>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-r>"
+      },
+      {
+        "key": "ctrl+shift+r",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-R>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-R>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-R>"
+      },
+      {
+        "key": "ctrl+s",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-s>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-s>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-s>"
+      },
+      {
+        "key": "ctrl+shift+s",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S>"
+      },
+      {
+        "key": "ctrl+t",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-t>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-t>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-t>"
+      },
+      {
+        "key": "ctrl+shift+t",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-T>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-T>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-T>"
+      },
+      {
+        "key": "ctrl+u",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-u>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-u>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-u>"
+      },
+      {
+        "key": "ctrl+shift+u",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-U>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-U>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-U>"
+      },
+      {
+        "key": "ctrl+v",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-v>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-v>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-v>"
+      },
+      {
+        "key": "ctrl+shift+v",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-V>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-V>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-V>"
+      },
+      {
+        "key": "ctrl+w",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-w>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-w>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-w>"
+      },
+      {
+        "key": "ctrl+shift+w",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-W>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-W>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-W>"
+      },
+      {
+        "key": "ctrl+x",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-x>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-x>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-x>"
+      },
+      {
+        "key": "ctrl+shift+x",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-X>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-X>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-X>"
+      },
+      {
+        "key": "ctrl+y",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-y>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-y>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-y>"
+      },
+      {
+        "key": "ctrl+shift+y",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-Y>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-Y>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-Y>"
+      },
+      {
+        "key": "ctrl+z",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-z>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-z>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-z>"
+      },
+      {
+        "key": "ctrl+shift+z",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-Z>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-Z>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-Z>"
+      },
+      {
+        "key": "ctrl+0",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-0>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-0>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-0>"
+      },
+      {
+        "key": "ctrl+shift+0",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-parenright>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-parenright>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-)>"
+      },
+      {
+        "key": "ctrl+1",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-1>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-1>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-1>"
+      },
+      {
+        "key": "ctrl+shift+1",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-exclamation>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-exclamation>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-!>"
+      },
+      {
+        "key": "ctrl+2",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-2>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-2>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-2>"
+      },
+      {
+        "key": "ctrl+shift+2",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-@>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-@>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-@>"
+      },
+      {
+        "key": "ctrl+3",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-3>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-3>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-3>"
+      },
+      {
+        "key": "ctrl+shift+3",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-#>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-#>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-#>"
+      },
+      {
+        "key": "ctrl+4",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-4>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-4>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-4>"
+      },
+      {
+        "key": "ctrl+shift+4",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-$>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-$>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-$>"
+      },
+      {
+        "key": "ctrl+5",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-5>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-5>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-5>"
+      },
+      {
+        "key": "ctrl+shift+5",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-%>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-%>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-%>"
+      },
+      {
+        "key": "ctrl+6",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-6>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-6>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-6>"
+      },
+      {
+        "key": "ctrl+shift+6",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-^>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-^>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-^>"
+      },
+      {
+        "key": "ctrl+7",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-7>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-7>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-7>"
+      },
+      {
+        "key": "ctrl+shift+7",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-ampersand>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-ampersand>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-&>"
+      },
+      {
+        "key": "ctrl+8",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-8>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-8>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-8>"
+      },
+      {
+        "key": "ctrl+shift+8",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-*>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-*>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-*>"
+      },
+      {
+        "key": "ctrl+9",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-9>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-9>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-9>"
+      },
+      {
+        "key": "ctrl+shift+9",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-parenleft>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-parenleft>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-(>"
+      },
+      {
+        "key": "ctrl+`",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-backtick>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-backtick>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-`>"
+      },
+      {
+        "key": "ctrl+shift+`",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-backtick>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-backtick>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-`>"
+      },
+      {
+        "key": "ctrl+-",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-->.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-->.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-->"
+      },
+      {
+        "key": "ctrl+shift+-",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-_>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-_>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-_>"
+      },
+      {
+        "key": "ctrl+=",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-equal>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-equal>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-=>"
+      },
+      {
+        "key": "ctrl+shift+=",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-+>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-+>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-+>"
+      },
+      {
+        "key": "ctrl+[",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-[>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-[>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-[>"
+      },
+      {
+        "key": "ctrl+shift+[",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-{>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-{>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-{>"
+      },
+      {
+        "key": "ctrl+]",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-]>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-]>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-]>"
+      },
+      {
+        "key": "ctrl+shift+]",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-}>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-}>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-}>"
+      },
+      {
+        "key": "ctrl+\\",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-\\>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-\\>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-\\>"
+      },
+      {
+        "key": "ctrl+shift+\\",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-bar>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-bar>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-|>"
+      },
+      {
+        "key": "ctrl+;",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-;>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-;>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-;>"
+      },
+      {
+        "key": "ctrl+shift+;",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-:>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-:>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-:>"
+      },
+      {
+        "key": "ctrl+'",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-singlequote>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-singlequote>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-'>"
+      },
+      {
+        "key": "ctrl+shift+'",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-\">.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-\">.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-\">"
+      },
+      {
+        "key": "ctrl+,",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-,>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-,>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-,>"
+      },
+      {
+        "key": "ctrl+shift+,",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-<>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-<>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-<>"
+      },
+      {
+        "key": "ctrl+.",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-.>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-.>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-.>"
+      },
+      {
+        "key": "ctrl+shift+.",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C->>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C->>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C->>"
+      },
+      {
+        "key": "ctrl+/",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-/>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-/>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-/>"
+      },
+      {
+        "key": "ctrl+shift+/",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-?>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-?>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-?>"
+      },
+      {
+        "key": "ctrl+tab",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-tab>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-tab>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-tab>"
+      },
+      {
+        "key": "shift+tab",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-tab>"
+      },
+      {
+        "key": "ctrl+shift+tab",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-tab>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-tab>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-tab>"
+      },
+      {
+        "key": "ctrl+enter",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-enter>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-enter>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-enter>"
+      },
+      {
+        "key": "shift+enter",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-enter>"
+      },
+      {
+        "key": "ctrl+shift+enter",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-enter>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-enter>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-enter>"
+      },
+      {
+        "key": "ctrl+escape",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-escape>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-escape>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-escape>"
+      },
+      {
+        "key": "shift+escape",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-escape>"
+      },
+      {
+        "key": "ctrl+shift+escape",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-escape>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-escape>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-escape>"
+      },
+      {
+        "key": "ctrl+backspace",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-backspace>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-backspace>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-backspace>"
+      },
+      {
+        "key": "shift+backspace",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-backspace>"
+      },
+      {
+        "key": "ctrl+shift+backspace",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-backspace>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-backspace>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-backspace>"
+      },
+      {
+        "key": "ctrl+space",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-space>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-space>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-space>"
+      },
+      {
+        "key": "shift+space",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-space>"
+      },
+      {
+        "key": "ctrl+shift+space",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-space>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-space>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-space>"
+      },
+      {
+        "key": "ctrl+delete",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-delete>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-delete>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-delete>"
+      },
+      {
+        "key": "shift+delete",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-delete>"
+      },
+      {
+        "key": "ctrl+shift+delete",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-delete>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-delete>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-delete>"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "generate:keybindings": "npx -y ts-node src/generators/keybindings.ts --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.102.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
+  }
+}

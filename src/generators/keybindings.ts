@@ -12,7 +12,18 @@ const keybindings = [] as KeyBinding[];
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 const numbers = '0123456789'.split('');
 const specials = "`-=[]\\;',./".split('');
-const others = ['tab', 'enter', 'escape', 'backspace', 'space', 'delete'];
+const others = [
+  'tab',
+  'enter',
+  'escape',
+  'backspace',
+  'space',
+  'delete',
+  'up',
+  'down',
+  'left',
+  'right',
+];
 
 const keys = [...alphabet, ...numbers, ...specials, ...others];
 
@@ -45,6 +56,10 @@ const shiftedKeys = {
   backspace: 'S-backspace',
   space: 'S-space',
   delete: 'S-delete',
+  up: 'S-up',
+  down: 'S-down',
+  left: 'S-left',
+  right: 'S-right',
 } as const;
 
 const whenSafeName = {
@@ -97,11 +112,11 @@ for (const key of keys) {
       modifier === 'shift'
         ? '!chords.bypass'
         : ['normal', 'visual']
-          .map(
-            (mode) =>
-              `(chords.listen.${whenSafe}.${mode} && chords.effectiveMode == '${mode}')`,
-          )
-          .join(' || ');
+            .map(
+              (mode) =>
+                `(chords.listen.${whenSafe}.${mode} && chords.effectiveMode == '${mode}')`,
+            )
+            .join(' || ');
 
     keybindings.push({
       key: `${modifier}+${key}`,

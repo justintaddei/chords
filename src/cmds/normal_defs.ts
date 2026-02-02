@@ -7,7 +7,12 @@ export enum MotionType {
 
 export type cmd_arg_T = number | boolean;
 export type nv_func_T = (args: NormalState['cmdArgs']) => void | Promise<void>;
-export type cmd_T = { cmd_char: string; cmd_func: nv_func_T; cmd_flags: number; cmd_arg: cmd_arg_T }
+export type cmd_T = {
+  cmd_char: string;
+  cmd_func: nv_func_T;
+  cmd_flags: number;
+  cmd_arg: cmd_arg_T;
+};
 
 export type oparg_T = {
   /**
@@ -16,7 +21,7 @@ export type oparg_T = {
   op_type: number;
   /**
    * register to use for the operator
-  */
+   */
   regName: string;
   /**
    * type of the current cursor motion
@@ -47,7 +52,7 @@ export type oparg_T = {
    * op_start and op_end the same (only used by op_change())
    */
   empty: boolean;
-}
+};
 export type cmdarg_T = {
   /**
    * Operator arguments
@@ -82,20 +87,19 @@ export type cmdarg_T = {
    * extra argument from nv_cmds
    */
   arg: cmd_arg_T;
-
-}
+};
 export type pos_T = {
   line: number;
   column: number;
-}
+};
 
 export type NormalState = {
   command_finished: boolean;
   opArgs: oparg_T;
-  cmdArgs: cmdarg_T
+  cmdArgs: cmdarg_T;
   char: string;
   // this is `idx` in neovim
   cmd: cmd_T;
   old_col: number;
   old_pos: pos_T;
-}
+};

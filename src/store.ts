@@ -1,8 +1,9 @@
 import vscode from 'vscode';
-import { config } from './config';
-import { NormalState, MotionType, cmd_T } from './cmds/normal_defs';
+import { MotionType, NormalState, cmd_T } from './cmds/normal_defs';
 import { OP } from './cmds/ops_defs';
-import { Cursor } from './selection/Cursor';
+import { config } from './config';
+import { Cursor, Direction } from './globals';
+import { editor } from './helpers';
 
 export type Mode =
   | 'normal'
@@ -42,12 +43,13 @@ export const initialNormalState = (): NormalState => {
     cmd: null as unknown as cmd_T,
     old_col: 0,
     old_pos: { line: 0, column: 0 },
-  }
-}
+  };
+};
 
 const initialStore = () => ({
   extContext: null as vscode.ExtensionContext | null,
   mode: config().get('startIn', 'insert') as Mode,
+  executing: false,
   input: [] as string[],
   recording: false,
   keymaps: config().get('keymaps', []) as [
@@ -56,7 +58,14 @@ const initialStore = () => ({
     string,
   ][],
   vimState: initialNormalState(),
-  cursors: [] as Cursor[],
+
+  // vim stuff outside of vimState
+  set_curswant: true,
+  _curswant: new WeakMap<vscode.TextEditor, number[]>(),
+  _cursors: new WeakMap<vscode.TextEditor, Cursor[]>(),
+  csearch_lastc: '',
+  csearch_lastcdir: Direction.DirectionNotSet as Direction,
+  csearch_until: false,
   // debug options
   debug: false,
 });
@@ -70,6 +79,18 @@ export const computed = {
   },
   get isInsertMode() {
     return get('mode') === 'insert';
+  },
+  get curswant() {
+    return get('_curswant').get(editor()) ?? [];
+  },
+  set curswant(value: number[]) {
+    get('_curswant').set(editor(), value);
+  },
+  get cursors() {
+    return get('_cursors').get(editor()) ?? [];
+  },
+  set cursors(value: Cursor[]) {
+    get('_cursors').set(editor(), value);
   },
 };
 
@@ -102,24 +123,23 @@ export const push = <K extends ArrayStoreKeys>(
 
 type StoreObjects = {
   [K in keyof Store]: Store[K] extends Record<string, unknown>
-  ? Store[K] extends unknown[]
-  ? never
-  : K
-  : never;
+    ? Store[K] extends unknown[]
+      ? never
+      : K
+    : never;
 }[keyof Store];
 
-export const mutate = <K extends StoreObjects>(
-  key: K
-) => new Proxy(store[key], {
-  get(target, prop) {
-    return target[prop as keyof Store[K]];
-  },
-  set(target, prop, value) {
-    target[prop as keyof Store[K]] = value;
-    notify(key);
-    return true;
-  },
-});
+export const mutate = <K extends StoreObjects>(key: K) =>
+  new Proxy(store[key], {
+    get(target, prop) {
+      return target[prop as keyof Store[K]];
+    },
+    set(target, prop, value) {
+      target[prop as keyof Store[K]] = value;
+      notify(key);
+      return true;
+    },
+  });
 
 export const notify = <K extends keyof Store>(key: K) => {
   const subs = subscribers.get(key);
@@ -127,7 +147,7 @@ export const notify = <K extends keyof Store>(key: K) => {
   for (const sub of subs) sub(store);
 };
 
-export const get = <K extends keyof Store>(key: K) => store[key]
+export const get = <K extends keyof Store>(key: K) => store[key];
 
 export const reset = (key: keyof Store) => set(key, initialStore()[key]);
 
@@ -158,7 +178,7 @@ export const notifyAll = () => {
   for (const subs of subscribers.values()) for (const sub of subs) sub(store);
 };
 
-export const destroy = () => { };
+export const destroy = () => {};
 
 vscode.workspace.onDidChangeConfiguration((e) => {
   if (e.affectsConfiguration('chords')) {

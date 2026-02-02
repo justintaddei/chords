@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import './extension-commands';
 import './context';
 import { input } from './input';
-import { set, subscribe } from './store';
+import { get, set, subscribe } from './store';
 import './ui/editorStyles';
 import './ui/statusBar';
 import { registerCmd } from './utils/registerCmd';

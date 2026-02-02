@@ -1,31 +1,20 @@
-import vscode from 'vscode';
-import { get, set } from '../store';
-import { Cursor } from './Cursor';
-import { debug } from '../utils/debug';
+import { Selection } from 'vscode';
+import { fromVSCodeSelection, toVSCodeSelection } from '../cmds/edit';
+import { editor } from '../helpers';
+import { computed } from '../store';
 
 export function prepareCursors(): void {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) return;
+  const cursors = editor().selections.map(fromVSCodeSelection);
 
-  const cursors = editor.selections.map(Cursor.fromVSCodeSelection)
-
-  const previousCursors = get('cursors');
-
-  if (!Cursor.match(previousCursors, cursors)) {
-    debug('Updating Vim cursors because they don\'t match the actual editor selections');
-    set('cursors', cursors);
-  } else {
-    debug('Vim cursors match the actual editor selections; no update needed');
-  }
+  computed.cursors = cursors;
 }
 
 export function transposeCursors(): void {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) return;
+  const updatedCursors = computed.cursors;
 
-  const cursors = get('cursors');
+  const selections: Selection[] = updatedCursors.map(toVSCodeSelection);
 
-  editor.selections = cursors.map(cursor => cursor.toVsCodeSelection());
+  editor().selections = selections;
 
-  editor.revealRange(editor.selections[0]);
+  editor().revealRange(editor().selections[0]);
 }

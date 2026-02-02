@@ -25,10 +25,11 @@ export default [
         },
       ],
 
-      curly: 'warn',
+      curly: 'off',
       eqeqeq: 'warn',
       'no-throw-literal': 'warn',
-      semi: 'warn',
+      semi: 'off',
+      '@typescript-eslint/semi': 'off',
     },
   },
 ];

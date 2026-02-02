@@ -59,7 +59,7 @@
             "visual line",
             "visual block"
           ],
-          "default": "insert",
+          "default": "normal",
           "description": "The mode that is selected when VS Code first opens"
         },
         "chords.statusIndicator.priority": {
@@ -233,6 +233,30 @@
         "command": "chords.input",
         "when": "editorTextFocus && !chords.bypass",
         "args": "<delete>"
+      },
+      {
+        "key": "up",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<up>"
+      },
+      {
+        "key": "down",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<down>"
+      },
+      {
+        "key": "left",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<left>"
+      },
+      {
+        "key": "right",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<right>"
       },
       {
         "key": "ctrl+a",
@@ -905,6 +929,78 @@
         "command": "chords.input",
         "when": "editorTextFocus && (chords.listen.<C-S-delete>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-delete>.visual && chords.effectiveMode == 'visual')",
         "args": "<C-S-delete>"
+      },
+      {
+        "key": "ctrl+up",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-up>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-up>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-up>"
+      },
+      {
+        "key": "shift+up",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-up>"
+      },
+      {
+        "key": "ctrl+shift+up",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-up>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-up>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-up>"
+      },
+      {
+        "key": "ctrl+down",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-down>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-down>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-down>"
+      },
+      {
+        "key": "shift+down",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-down>"
+      },
+      {
+        "key": "ctrl+shift+down",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-down>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-down>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-down>"
+      },
+      {
+        "key": "ctrl+left",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-left>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-left>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-left>"
+      },
+      {
+        "key": "shift+left",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-left>"
+      },
+      {
+        "key": "ctrl+shift+left",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-left>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-left>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-left>"
+      },
+      {
+        "key": "ctrl+right",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-right>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-right>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-right>"
+      },
+      {
+        "key": "shift+right",
+        "command": "chords.input",
+        "when": "editorTextFocus && !chords.bypass",
+        "args": "<S-right>"
+      },
+      {
+        "key": "ctrl+shift+right",
+        "command": "chords.input",
+        "when": "editorTextFocus && (chords.listen.<C-S-right>.normal && chords.effectiveMode == 'normal') || (chords.listen.<C-S-right>.visual && chords.effectiveMode == 'visual')",
+        "args": "<C-S-right>"
       }
     ]
   },

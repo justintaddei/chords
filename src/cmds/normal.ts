@@ -1,10 +1,12 @@
 import { Direction, FAIL } from '../globals';
-import { editor } from '../helpers';
+import { document, editor } from '../helpers';
 import { readNextChar } from '../input';
+import { move } from '../selection/mutate';
 import { prepareCursors, transposeCursors } from '../selection/transposition';
-import { get, reset, set } from '../store';
+import { computed, get, reset, set } from '../store';
 import { blink, showWarning } from '../ui/statusBar';
-import { oneDown, oneLeft, oneRight, oneUp } from './edit';
+import { validateCursor } from './cursor';
+import { cursor_down, oneLeft, oneRight, cursor_up, beginline } from './edit';
 import { update_curswant } from './move';
 import {
   cmd_arg_T,
@@ -21,10 +23,10 @@ const NV_NCH = 0x01; // may need to get a second char
 const NV_NCH_NOP = 0x02 | NV_NCH; // get second char when no operator pending
 const NV_NCH_ALW = 0x04 | NV_NCH; // always get a second char
 
-const NV_RL = 0x80; // 'rightleft' modifies command
-const NV_KEEPREG = 0x100; // don't clear regname
-const BL_WHITE = 1;
-const BL_FIX = 2;
+export const NV_RL = 0x80; // 'rightleft' modifies command
+export const NV_KEEPREG = 0x100; // don't clear regname
+export const BL_WHITE = 1;
+export const BL_SOL = 2;
 
 const SEARCH_REV = 1;
 
@@ -93,7 +95,7 @@ const nv_cmd_actual: [string, nv_func_T, number, cmd_arg_T][] = [
   ['[', nv_brackets, NV_NCH_ALW, Direction.BACKWARD],
   ['\\', nv_error, 0, 0],
   [']', nv_brackets, NV_NCH_ALW, Direction.FORWARD],
-  ['^', nv_beginline, 0, BL_WHITE | BL_FIX],
+  ['^', nv_beginline, 0, BL_WHITE],
   ['_', nv_lineop, 0, 0],
   ['`', nv_gomark, NV_NCH_ALW, false],
   ['a', nv_edit, NV_NCH, 0],
@@ -232,13 +234,11 @@ export async function normal_execute(key: string) {
 
   transposeCursors();
   clearOp();
-
-  console.log(get('_curswant'), editor().document.fileName);
 }
 
 async function normal_get_command_count(s: NormalState) {
   while (
-    (s.char >= '0' && s.char <= '9') ||
+    (s.char >= '1' && s.char <= '9') ||
     (s.cmdArgs.count0 !== 0 && (s.char === '<delete>' || s.char === '0'))
   ) {
     if (s.char === '<delete>') {
@@ -338,9 +338,7 @@ function nv_right(ca: NormalState['cmdArgs']) {
 
   for (let n = ca.count1; n > 0; n--) {
     if (!oneRight()) {
-      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) {
-        blink();
-      }
+      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) blink();
       break;
     }
   }
@@ -352,9 +350,7 @@ function nv_left(ca: NormalState['cmdArgs']) {
 
   for (let n = ca.count1; n > 0; n--) {
     if (oneLeft() === FAIL) {
-      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) {
-        blink();
-      }
+      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) blink();
       break;
     }
   }
@@ -363,27 +359,13 @@ function nv_left(ca: NormalState['cmdArgs']) {
 function nv_up(ca: NormalState['cmdArgs']): void {
   ca.opArgs.motion_type = MotionType.LineWise;
 
-  for (let n = ca.count1; n > 0; n--) {
-    if (!oneUp()) {
-      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) {
-        blink();
-      }
-      break;
-    }
-  }
+  if (cursor_up(ca.count1) === FAIL) blink();
 }
 
 function nv_down(ca: NormalState['cmdArgs']): void {
   ca.opArgs.motion_type = MotionType.LineWise;
 
-  for (let n = ca.count1; n > 0; n--) {
-    if (!oneDown()) {
-      if (ca.opArgs.op_type === OP.NOP && n === ca.count1) {
-        blink();
-      }
-      break;
-    }
-  }
+  if (cursor_down(ca.count1) === FAIL) blink();
 }
 
 /**
@@ -422,7 +404,12 @@ function nv_ident(ca: NormalState['cmdArgs']): void {
 }
 
 function nv_dollar(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
+  ca.opArgs.motion_type = MotionType.CharWise;
+  ca.opArgs.inclusive = true;
+
+  computed.curswant.fill(Infinity);
+
+  if (cursor_down(ca.count1 - 1) === FAIL) blink();
 }
 
 function nv_percent(ca: NormalState['cmdArgs']): void {
@@ -450,7 +437,9 @@ function nv_search(ca: NormalState['cmdArgs']): void {
 }
 
 function nv_beginline(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
+  ca.opArgs.motion_type = MotionType.CharWise;
+  ca.opArgs.inclusive = false;
+  beginline(ca.arg as number);
 }
 
 function nv_ignore(ca: NormalState['cmdArgs']): void {
@@ -481,8 +470,27 @@ function nv_wordcmd(ca: NormalState['cmdArgs']): void {
   throw new Error('Function not implemented.');
 }
 
+/**
+ * "G", "gg", CTRL-END, CTRL-HOME.
+ * cap->arg is true for "G".
+ *
+ * todo: currently, if you have multiple cursors, all go to the same line.
+ * It might be better if we calculate the offset from the "first" cursor to
+ * the rest and set the other cursors accordingly. This would need to factor
+ * in the direction of the movement.
+ */
 function nv_goto(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
+  let line = ca.arg ? document().lineCount - 1 : 0;
+
+  if (ca.count0 !== 0) line = ca.count0 - 1;
+
+  ca.opArgs.motion_type = MotionType.LineWise;
+
+  const curswant = computed.curswant;
+
+  move((cursor, i) => {
+    return validateCursor(line, curswant[i] ?? cursor.char);
+  });
 }
 
 function nv_scroll(ca: NormalState['cmdArgs']): void {
@@ -538,7 +546,84 @@ function nv_lineop(ca: NormalState['cmdArgs']): void {
 }
 
 function nv_g_cmd(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
+  switch (ca.nextChar) {
+    case '<C-a>':
+    case '<C-x>':
+    case 'R':
+    case 'r':
+    case '&':
+    case 'v':
+    case 'V':
+    case '<delete>':
+    case 'h':
+    case 'H':
+    case '<C-h>':
+    case 'N':
+    case 'n':
+    case 'j':
+    case '<down>':
+    case 'k':
+    case '<up>':
+    case 'J':
+    case '^':
+    case '0':
+    case 'm':
+    case '<home>':
+    // case K_KHOME:
+    case 'M':
+    case '_':
+    case '$':
+    case '<end>':
+    // case K_KEND:
+    case '*':
+    case '#':
+    case '<pound>': // pound sign (sometimes equal to '#')
+    case '<C-rsb>': // :tag or :tselect for current identifier
+    case ']': // :tselect for current identifier
+    case 'e':
+    case 'E':
+    case '<C-g>':
+    case 'i':
+    case 'I':
+    case 'f':
+    case 'F':
+    case "'":
+    case '`':
+    case 's':
+    case 'a':
+    case '8':
+    case '<':
+      throw new Error('Function not implemented.');
+    case 'g': // gg command
+      ca.arg = false;
+      nv_goto(ca);
+      break;
+    case 'q':
+    case 'w':
+    case '~':
+    case 'u':
+    case 'U':
+    case '?':
+    case '@':
+    case 'd':
+    case 'D':
+    // case K_IGNORE:
+    case 'p':
+    case 'P':
+    case 'o':
+    case 'Q':
+    case ',':
+    case ';':
+    case 't':
+    case 'T':
+    case '<tab>':
+    case '+':
+    case '-': // "g+" and "g-": undo or redo along the timeline
+      throw new Error('Function not implemented.');
+    default:
+      clearOp();
+      break;
+  }
 }
 
 function nv_mark(ca: NormalState['cmdArgs']): void {

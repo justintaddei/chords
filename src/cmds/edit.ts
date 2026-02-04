@@ -3,25 +3,15 @@ import { Cursor, FAIL, RESULT } from '../globals';
 import { document } from '../helpers';
 import { move } from '../selection/mutate';
 import { computed, set } from '../store';
+import { BL_SOL, BL_WHITE } from './normal';
+import { coladvance, validateCursor } from './cursor';
 
-const clamp = (num: number, min: number, max: number): number => {
+export const clamp = (num: number, min: number, max: number): number => {
   return Math.max(min, Math.min(num, max));
 };
 
 export const cursorEquals = (a: Cursor, b: Cursor): boolean => {
   return a.line === b.line && a.char === b.char;
-};
-
-const validateCursor = (line: number, char: number): Cursor => {
-  const doc = document();
-  const maxLine = doc.lineCount - 1;
-  const clampedLine = clamp(line, 0, maxLine);
-  const lineLength = Math.max(0, doc.lineAt(clampedLine).text.length - 1);
-
-  return {
-    line: clampedLine,
-    char: clamp(char, 0, lineLength),
-  };
 };
 
 export const cursorsMatch = (a: Cursor[], b: Cursor[]): boolean => {
@@ -62,16 +52,51 @@ export function oneRight(): RESULT {
   });
 }
 
-export function oneUp(): RESULT {
+export function cursor_up(n: number): RESULT {
   const curswant = computed.curswant;
+
   return move((cursor, i) => {
-    return validateCursor(cursor.line - 1, curswant[i] ?? cursor.char);
+    if (n > 0 && cursor.line <= 1) return FAIL;
+
+    // in neovim they call cursor_up_inner to handle folded regions, etc.
+    // neovim also calls `coladvance` after to cursor is moved. I'm using validateCursor
+    // to do the same thing.
+    return validateCursor(cursor.line - n, curswant[i] ?? cursor.char);
   });
 }
 
-export function oneDown(): RESULT {
+export function cursor_down(n: number): RESULT {
   const curswant = computed.curswant;
+
   return move((cursor, i) => {
-    return validateCursor(cursor.line + 1, curswant[i] ?? cursor.char);
+    if (n > 0 && cursor.line >= document().lineCount - 1) return FAIL;
+
+    // in neovim they call cursor_down_inner to handle folded regions, etc.
+    // neovim also calls `coladvance` after to cursor is moved. I'm using validateCursor
+    // to do the same thing.
+    return validateCursor(cursor.line + n, curswant[i] ?? cursor.char);
+  });
+}
+
+/**
+ * move cursor to start of line
+ * if flags & BL_WHITE  move to first non-white
+ * if flags & BL_SOL    move to first non-white if startofline is set,
+ *                          otherwise keep "curswant" column
+ */
+export function beginline(flags: number) {
+  if (flags & BL_SOL) {
+    return coladvance();
+  }
+
+  set('set_curswant', true);
+
+  return move((cursor) => {
+    return validateCursor(
+      cursor.line,
+      flags & BL_WHITE
+        ? document().lineAt(cursor.line).firstNonWhitespaceCharacterIndex
+        : 0,
+    );
   });
 }

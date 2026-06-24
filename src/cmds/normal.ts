@@ -1,3 +1,4 @@
+import { commands } from 'vscode';
 import { Direction, FAIL } from '../globals';
 import { document, editor } from '../helpers';
 import { readNextChar } from '../input';
@@ -5,7 +6,8 @@ import { move } from '../selection/mutate';
 import { prepareCursors, transposeCursors } from '../selection/transposition';
 import { computed, get, reset, set } from '../store';
 import { blink, showWarning } from '../ui/statusBar';
-import { validateCursor } from './cursor';
+import { ins_text } from './change';
+import { get_cursor_pos_lengths, validateCursor } from './cursor';
 import { cursor_down, oneLeft, oneRight, cursor_up, beginline } from './edit';
 import { update_curswant } from './move';
 import {
@@ -329,7 +331,23 @@ function clearOp() {
 
 function clearOpNotify() {
   clearOp();
-  showWarning('(invalid command)');
+  blink();
+}
+
+function checkClearOp(opArgs: NormalState['opArgs']) {
+  if (opArgs.op_type === OP.NOP) {
+    return false;
+  }
+  clearOpNotify();
+  return true;
+}
+
+function checkClearOpQ(opArgs: NormalState['opArgs']) {
+  if (opArgs.op_type === OP.NOP && !computed.isVisualMode) {
+    return false;
+  }
+  clearOpNotify();
+  return true;
 }
 
 function nv_right(ca: NormalState['cmdArgs']) {
@@ -388,11 +406,28 @@ function nv_csearch(ca: NormalState['cmdArgs']) {
 }
 
 function nv_replace(ca: NormalState['cmdArgs']) {
-  throw new Error('Function not implemented.');
+  if (checkClearOp(ca.opArgs)) return;
+
+  // todo: handle visual mode 'r'
+
+  if (get_cursor_pos_lengths().some((len) => len < ca.count1)) {
+    clearOpNotify();
+    return;
+  }
+
+  const replacement = ca.nextChar.repeat(ca.count1);
+
+  ins_text(replacement, 'replace');
+
+  move((cursor) => validateCursor(cursor.line, cursor.char - 1));
+
+  set('set_curswant', true);
+
+  //todo: set op_last_insert, op_cur_start and end
 }
 
 function nv_operator(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
+  const op_type = get_op_type(ca.cmdChar, ca.nextChar);
 }
 
 function nv_regname(ca: NormalState['cmdArgs']): void {
@@ -525,10 +560,6 @@ function nv_subst(ca: NormalState['cmdArgs']): void {
   throw new Error('Function not implemented.');
 }
 
-function nv_Undo(ca: NormalState['cmdArgs']): void {
-  throw new Error('Function not implemented.');
-}
-
 function nv_Zet(ca: NormalState['cmdArgs']): void {
   throw new Error('Function not implemented.');
 }
@@ -634,7 +665,38 @@ function nv_record(ca: NormalState['cmdArgs']): void {
   throw new Error('Function not implemented.');
 }
 
-function nv_undo(ca: NormalState['cmdArgs']): void {
+async function nv_kundo(ca: NormalState['cmdArgs']): Promise<void> {
+  if (checkClearOpQ(ca.opArgs)) return;
+
+  let count = ca.count1;
+
+  // fixme: vscode doesn't place the cursor at it's previous location when undoing
+  while (count--) await commands.executeCommand('undo');
+
+  set('set_curswant', true);
+}
+
+async function nv_undo(ca: NormalState['cmdArgs']): Promise<void> {
+  if (ca.opArgs.op_type === OP.LOWER || computed.isVisualMode) {
+    ca.cmdChar = 'g';
+    ca.nextChar = 'u';
+    nv_operator(ca);
+  } else {
+    nv_kundo(ca);
+  }
+}
+
+function nv_Undo(ca: NormalState['cmdArgs']): void {
+  if (ca.opArgs.op_type === OP.LOWER) {
+    ca.cmdChar = 'g';
+    ca.nextChar = 'U';
+    nv_operator(ca);
+    return;
+  }
+
+  if (checkClearOpQ(ca.opArgs)) return;
+
+  //todo: undo line
   throw new Error('Function not implemented.');
 }
 

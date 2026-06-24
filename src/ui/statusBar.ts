@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import vscode, { ThemeColor } from 'vscode';
 import { config } from '../config';
 import { get, type Mode, subscribe } from '../store';
 import { disposable } from '../utils/vscodeSubscriptionManager';
@@ -17,6 +17,8 @@ const modeColors = {
 const messageColors = {
   ok: 'var(--vscode-charts-green, green)',
   error: 'var(--vscode-charts-red, red)',
+  errorBG: new ThemeColor('statusBarItem.errorBackground'),
+  errorFG: new ThemeColor('statusBarItem.errorForeground'),
 } as const;
 
 const modeIndicator = disposable(
@@ -60,13 +62,15 @@ export const showWarning = (msg: string) => {
 };
 
 export const blink = () => {
-  modeIndicator.color = messageColors.error;
+  modeIndicator.backgroundColor = messageColors.errorBG;
+  modeIndicator.color = messageColors.errorFG;
 
   setTimeout(() => {
     const mode = get('mode');
     modeIndicator.color = modeColors[mode];
-  }, 300);
-}
+    modeIndicator.backgroundColor = undefined;
+  }, 500);
+};
 
 export const showError = (msg: string) => {
   vscode.window.showErrorMessage(msg);

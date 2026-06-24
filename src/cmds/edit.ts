@@ -29,10 +29,19 @@ export const fromVSCodeSelection = (selection: vscode.Selection): Cursor => {
   };
 };
 
-export const toVSCodeSelection = (cursor: Cursor): vscode.Selection => {
-  const position = new vscode.Position(cursor.line, cursor.char);
-  return new vscode.Selection(position, position);
-};
+export function toVSCodeSelection(
+  anchor: Cursor,
+  active: Cursor,
+): vscode.Selection;
+export function toVSCodeSelection(cursor: Cursor): vscode.Selection;
+export function toVSCodeSelection(
+  start: Cursor,
+  end?: Cursor,
+): vscode.Selection {
+  const anchor = new vscode.Position(start.line, start.char);
+  const active = end ? new vscode.Position(end.line, end.char) : anchor;
+  return new vscode.Selection(anchor, active);
+}
 
 export function oneLeft(): RESULT {
   set('set_curswant', true);

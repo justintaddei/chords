@@ -26,3 +26,9 @@ export const validateCursor = (line: number, char: number): Cursor => {
     char: clamp(char, 0, lineLength),
   };
 };
+
+export function get_cursor_pos_lengths() {
+  return computed.cursors.map(
+    (cursor) => document().lineAt(cursor.line).text.length - cursor.char,
+  );
+}

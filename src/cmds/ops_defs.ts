@@ -116,11 +116,11 @@ export enum OP {
    */
   FUNCTION = 27,
   /**
-   * "<C-A>" Add to the number or alphabetic character
+   * "\<C-a>" Add to the number or alphabetic character
    */
   NR_ADD = 28,
   /**
-   * "<C-X>" Subtract from the number or alphabetic character
+   * "\<C-x>" Subtract from the number or alphabetic character
    */
   NR_SUB = 29,
-};
+}

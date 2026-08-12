@@ -1,14 +1,14 @@
 import { commands } from 'vscode';
 import { Direction, FAIL } from '../globals';
-import { document, editor } from '../helpers';
+import { curpos_editable, document } from '../helpers';
 import { readNextChar } from '../input';
 import { move } from '../selection/mutate';
 import { prepareCursors, transposeCursors } from '../selection/transposition';
 import { computed, get, reset, set } from '../store';
-import { blink, showWarning } from '../ui/statusBar';
+import { blink } from '../ui/statusBar';
 import { ins_text } from './change';
 import { get_cursor_pos_lengths, validateCursor } from './cursor';
-import { cursor_down, oneLeft, oneRight, cursor_up, beginline } from './edit';
+import { beginline, cursor_down, cursor_up, oneLeft, oneRight } from './edit';
 import { update_curswant } from './move';
 import {
   cmd_arg_T,
@@ -17,6 +17,7 @@ import {
   NormalState,
   nv_func_T,
 } from './normal_defs';
+import { do_pending_operator, get_op_type, op_is_change } from './ops';
 import { OP } from './ops_defs';
 import { searchc } from './search';
 
@@ -139,6 +140,8 @@ const nv_cmd = new Map<string, cmd_T>(
   }),
 );
 
+let finish_op = false;
+
 /**
  * Finds the command corresponding to the given character.
  *
@@ -153,6 +156,29 @@ function normal_check(state: NormalState): -1 | 0 | 1 {
   update_curswant();
 
   return 1;
+}
+
+function normal_end() {}
+
+function normal_finish_command(state: NormalState) {
+  let did_visual_op = false;
+
+  if (state.command_finished) return normal_end();
+
+  if (
+    !finish_op &&
+    !state.opArgs.op_type &&
+    (!state.cmd || !(state.cmd.cmd_flags & NV_KEEPREG))
+  ) {
+    clearOp();
+    // todo: set_reg_var
+  }
+
+  // todo: Do we need the `if (state.cmdArgs.cmdChar !== K_IGNORE)` check?
+  did_visual_op =
+    /* VIsual_active && */ state.opArgs.op_type !== OP.NOP &&
+    state.opArgs.op_type !== OP.COLON;
+  do_pending_operator(state.cmdArgs, state.old_col, false);
 }
 
 export async function normal_execute(key: string) {
@@ -215,6 +241,7 @@ export async function normal_execute(key: string) {
     state.cmdArgs.nextChar === '<escape>' ||
     state.cmdArgs.extraChar === '<escape>'
   ) {
+    state.command_finished = true;
     clearOp();
     return;
   }
@@ -229,13 +256,14 @@ export async function normal_execute(key: string) {
     await Promise.resolve(state.cmd.cmd_func(state.cmdArgs));
   } catch (e) {
     console.error(`Error executing command "${get('input').join('')}":\n${e}`);
-    clearOp();
+    clearOpNotify();
     set('set_curswant', false);
     return;
   }
 
   transposeCursors();
-  clearOp();
+
+  normal_finish_command(state);
 }
 
 async function normal_get_command_count(s: NormalState) {
@@ -428,6 +456,18 @@ function nv_replace(ca: NormalState['cmdArgs']) {
 
 function nv_operator(ca: NormalState['cmdArgs']): void {
   const op_type = get_op_type(ca.cmdChar, ca.nextChar);
+
+  if (op_is_change(op_type) && !curpos_editable()) {
+    clearOpNotify();
+  }
+
+  if (op_type === ca.opArgs.op_type) {
+    // double operator works on lines
+    nv_lineop(ca);
+  } else if (!checkClearOp(ca.opArgs)) {
+    ca.opArgs.start = computed.cursors;
+    ca.opArgs.op_type = op_type;
+  }
 }
 
 function nv_regname(ca: NormalState['cmdArgs']): void {

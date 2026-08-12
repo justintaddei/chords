@@ -17,3 +17,8 @@ export const document = () => {
     );
   return doc;
 };
+
+// todo: this doesn't seem to be supported by the vscode api
+export const curpos_editable = () => {
+  return true;
+};

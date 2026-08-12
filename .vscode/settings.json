@@ -12,9 +12,12 @@
     "beginline",
     "coladvance",
     "csearch",
+    "curpos",
     "curswant",
+    "KEEPREG",
     "lastc",
     "lastcdir",
+    "opchars",
     "searchc"
   ]
 }

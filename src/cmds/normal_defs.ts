@@ -1,3 +1,5 @@
+import { Cursor } from '../globals';
+
 export enum MotionType {
   CharWise,
   LineWise,
@@ -39,11 +41,11 @@ export type oparg_T = {
   /**
    * start of the operator
    */
-  start: pos_T;
+  start: pos_T[]; // Cursor[]
   /**
    * end of the operator
    */
-  end: pos_T;
+  end: pos_T[]; // Cursor[]
   /**
    * number of lines from op_start to op_end (inclusive)
    */
@@ -88,10 +90,7 @@ export type cmdarg_T = {
    */
   arg: cmd_arg_T;
 };
-export type pos_T = {
-  line: number;
-  column: number;
-};
+export type pos_T = Cursor;
 
 export type NormalState = {
   command_finished: boolean;

@@ -20,8 +20,8 @@ export const initialNormalState = (): NormalState => {
     motion_type: MotionType.CharWise,
     inclusive: false,
     motion_force: false,
-    start: { line: 0, column: 0 },
-    end: { line: 0, column: 0 },
+    start: [] as Cursor[],
+    end: [] as Cursor[],
     lineCount: 0,
     empty: true,
   } as const;
@@ -42,7 +42,7 @@ export const initialNormalState = (): NormalState => {
     char: '',
     cmd: null as unknown as cmd_T,
     old_col: 0,
-    old_pos: { line: 0, column: 0 },
+    old_pos: { line: 0, char: 0 },
   };
 };
 
